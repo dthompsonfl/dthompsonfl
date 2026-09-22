@@ -1,382 +1,529 @@
 # Technical Stack
 
-This is a practical inventory of technologies I currently use or have used in hands-on project work.
+This is a depth-based inventory, not a list of every technology I have encountered.
 
-I separate strong day-to-day areas from adjacent technologies so the profile is useful during a technical interview rather than functioning as a keyword list.
+I use three levels:
 
-## Depth legend
+- **Primary** — technologies and engineering areas I use deeply enough to design, implement, debug, and review substantial systems.
+- **Working** — real hands-on implementation experience, but either narrower in scope or secondary to a stronger primary area.
+- **Adjacent** — concepts or technologies I can work with and reason about, but I do not present them as equivalent to my strongest experience.
 
-- **Primary** — used regularly in current engineering work
-- **Working** — meaningful hands-on use, but not my primary specialization
-- **Adjacent** — comfortable with the architecture/concepts; less production depth
+Evidence is also labeled by source type where that distinction matters:
 
-## Backend and application development
+- **Public** — inspectable in a public repository.
+- **Private source-validated** — verified in current private repositories and summarized without exposing proprietary material.
+- **Historical** — relevant to my progression but not representative of current depth.
+
+---
+
+## Backend and application languages
 
 ### TypeScript — Primary
 
-Used across:
+My current backend and product engineering is heavily TypeScript-based.
 
-- backend application logic
-- APIs
-- Next.js applications
-- React interfaces
-- validation
-- integrations
-- workflow logic
-- administrative systems
-- automation
+Used for:
 
-TypeScript is currently the language most consistently shared across my web/backend application work.
+- Node.js services
+- API routes and service layers
+- domain/application logic
+- authentication and authorization
+- admin/control-plane systems
+- workflow/job orchestration
+- validation and typed contracts
+- integration adapters
+- tests and verification tooling
+
+**Evidence:** public [ECCB package/runtime](https://github.com/dthompsonfl/eccb.app/blob/main/package.json); private source-validated current SaaS, control-plane, restaurant, finance, and domain systems.
 
 ### Node.js — Primary
 
-Used for:
+Used as the runtime for backend services, API layers, workers, automation, validation tooling, and application servers.
 
-- backend services
-- API endpoints
-- application orchestration
-- integration boundaries
-- server-side workflows
-- TypeScript service layers
+My focus is less on framework branding and more on:
 
-### JavaScript — Primary/Working
+- authoritative service boundaries
+- input validation
+- failure classification
+- idempotency
+- authorization
+- integration isolation
+- observability
+- background work
+- migrations and release controls
 
-Used throughout earlier and current web/application work, including Shopify and Frappe/browser integrations.
+**Evidence:** public ECCB; multiple current private TypeScript systems.
 
-## Web application architecture
+### JavaScript — Working
+
+Used throughout earlier commerce work and current web/application ecosystems, including browser logic, build/release tooling, and framework integration.
+
+### Python — Working
+
+Used for operational business applications and automation.
+
+**Public evidence:** [dthompsonfl/repair_portal](https://github.com/dthompsonfl/repair_portal), including [scheduler/application hooks](https://github.com/dthompsonfl/repair_portal/blob/main/repair_portal/hooks.py) and [retention logic](https://github.com/dthompsonfl/repair_portal/blob/main/repair_portal/repair_portal/utils/compliance.py).
+
+---
+
+## Web and product engineering
 
 ### Next.js — Primary
 
-Used for:
+Used for full-stack product applications, public sites, authenticated application surfaces, admin/control planes, route/API boundaries, and server-rendered React systems.
 
-- public applications
-- authenticated portals
-- administrative control planes
-- SaaS interfaces
-- operational dashboards
-- API/server functionality
-- server/client boundaries
+**Public evidence:** [dthompsonfl/eccb.app](https://github.com/dthompsonfl/eccb.app).
 
-Recent work uses modern App Router-era Next.js.
+**Private source-validated:** current SaaS, control-plane, restaurant, finance, and domain products.
 
 ### React — Primary
 
-Used across:
+Used for complex product surfaces including:
 
-- application interfaces
-- administrative surfaces
-- operational dashboards
-- reusable component systems
-- responsive applications
+- admin systems
+- authenticated portals
+- workflow-heavy operational interfaces
+- configuration tools
+- dashboards
+- mobile-adjacent shared TypeScript patterns
 
-## Relational data
+My preference is to keep React responsible for interaction and presentation while authoritative business rules remain in application/domain/service boundaries.
+
+### REST/API architecture — Primary
+
+Hands-on work includes:
+
+- resource and command-oriented endpoints
+- typed request/response contracts
+- authentication and authorization
+- validation
+- scoped resource access
+- integration APIs
+- idempotency
+- error contracts
+- versioning and migration concerns
+- mobile/backend synchronization
+
+**Public example:** [POS payment routes](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt).
+
+---
+
+## Relational data and persistence
 
 ### PostgreSQL — Primary
 
-A primary database technology in current SaaS and backend work.
+PostgreSQL is my strongest current database area.
 
-Hands-on concerns include:
+Private source inspection verifies:
 
-- relational domain modeling
-- schema evolution
-- migrations
-- transactional business data
-- tenant/location relationships
-- authorization context
-- reporting structures
-- integrity constraints
+- Prisma schemas using the PostgreSQL provider
+- application data models
+- migrations and migration validation
+- PostgreSQL integration tests
+- relational constraints
+- authorization/data-boundary work
+- control-plane and domain persistence
+- database operational tooling
+
+I do not misattribute this experience to ECCB; the public ECCB repository uses MySQL/MariaDB.
+
+**Evidence type:** private source-validated.
 
 ### Prisma — Primary
 
-Used for:
+Used across current TypeScript systems for:
 
-- schema definition
-- generated database access
-- relational modeling
+- relational schema design
 - migrations
-- service-layer persistence
-- seed workflows
+- generated typed clients
+- transactions
+- application service persistence
+- PostgreSQL and MySQL/MariaDB-backed applications
+
+**Public evidence:** ECCB uses Prisma with MySQL/MariaDB.
+
+**Private source-validated:** multiple PostgreSQL systems.
 
 ### PostGIS — Working
 
-Used where applications require:
+Used in a private PostgreSQL-backed domain system for spatial data and geometry-backed application models.
 
-- geospatial records
-- spatial relationships
-- location-aware workflows
+This is real schema/application work, but I position PostGIS below general PostgreSQL depth.
 
-### MariaDB / MySQL — Working
+**Evidence type:** private source-validated.
 
-Used in Frappe/ERPNext and public full-stack application work.
+### MySQL / MariaDB — Working
 
-The [ECCB platform](https://github.com/dthompsonfl/eccb.app) is a current public example.
+Used in public and private application systems.
 
-## Mobile and offline systems
+**Public evidence:**
 
-### Kotlin — Working
+- [ECCB Prisma schema](https://github.com/dthompsonfl/eccb.app/blob/main/prisma/schema.prisma) uses the MySQL provider.
+- Repair Portal is built on Frappe/ERPNext and MariaDB/MySQL.
+- The private restaurant platform also uses a MariaDB/MySQL Prisma data layer.
 
-Used for Android operational applications, especially POS-oriented work.
+### Room — Primary for native Android persistence
 
-### Jetpack Compose — Working
+Used for local Android persistence, explicit schema migrations, offline projections, and durable synchronization queues.
 
-Used for modern Android UI and operational workflows.
+**Public evidence:**
 
-### Room — Working
+- [SyncOutboxEntity.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncOutboxEntity.kt)
+- [PosMigrations.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/db/PosMigrations.kt)
 
-Used for:
+### MongoDB — Adjacent
 
-- structured local persistence
-- schema versioning
-- migrations
-- offline operational data
+I understand document-database modeling concepts and can work in an existing MongoDB system, but I do **not** present MongoDB as equivalent to my PostgreSQL experience.
 
-Public implementation: [Enterprise POS Android](https://github.com/dthompsonfl/pos).
+No portfolio claim depends on MongoDB expertise.
 
-### WorkManager — Working
+---
 
-Used in Android architecture for durable/background synchronization work.
+## Authentication, authorization, and security
 
-### React Native — Adjacent/Working
+### RBAC / server-side authorization — Primary
 
-Part of my cross-platform mobile architecture work.
+I design role/permission systems with the server as the authority.
 
-My strongest current public native implementation evidence is Android/Kotlin, so I do not present myself as primarily a React Native specialist.
+Relevant concerns include:
 
-## Authentication and authorization
+- role and permission modeling
+- resource scope
+- tenant/location boundaries
+- deny-by-default behavior
+- manager/admin overrides
+- session authority
+- auditability
+- separation between UI guidance and actual authorization
 
-### RBAC / application authorization — Primary
+**Public evidence:** ECCB contains Better Auth configuration and role/permission surfaces; Repair Portal contains Frappe permission handlers.
 
-Experience includes:
-
-- role-based access control
-- fine-grained permission models
-- tenant-aware boundaries
-- location-aware boundaries
-- administrative roles
-- server-side authorization
-- session-aware application flows
-
-I treat client-side visibility and server-side authorization as separate concerns.
+**Private source-validated:** centralized RBAC and authorization across current restaurant and SaaS/control-plane systems.
 
 ### Better Auth — Working
 
-Used in modern Next.js application work.
+**Public evidence:** [ECCB auth configuration](https://github.com/dthompsonfl/eccb.app/blob/main/src/lib/auth/config.ts) includes Prisma persistence, email/password flows, verification, magic links, two-factor support, database sessions, secure cookie configuration, and built-in rate-limiting configuration.
 
-Public evidence:
+### Security engineering — Working / cross-cutting
 
-- [ECCB auth configuration](https://github.com/dthompsonfl/eccb.app/blob/main/src/lib/auth/config.ts)
-- [ECCB auth route](https://github.com/dthompsonfl/eccb.app/blob/main/src/app/api/auth/%5B...all%5D/route.ts)
+Recurring work includes:
+
+- secret isolation
+- request validation
+- session/auth boundaries
+- least privilege
+- scoped authorization
+- webhook verification
+- audit controls
+- dependency/release checks
+- sensitive-data boundaries
+- fail-closed runtime configuration
+
+I do not claim a compliance certification merely because a codebase contains security controls.
+
+---
+
+## Jobs, workflow orchestration, and reliability
+
+### Redis — Working
+
+Used for queue/workflow infrastructure and application coordination.
+
+**Public evidence:** ECCB job infrastructure uses Redis/ioredis.
+
+### BullMQ — Working
+
+Used for named queues, workers, retries, concurrency controls, dead-letter handling, queue status, and graceful shutdown.
+
+**Public evidence:** [ECCB queue implementation](https://github.com/dthompsonfl/eccb.app/blob/main/src/lib/jobs/queue.ts).
+
+### WorkManager — Primary for Android background work
+
+Used for durable Android synchronization and retry behavior.
+
+**Public evidence:** [POS SyncEngine.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncEngine.kt).
+
+### Idempotency / retries / recovery — Primary engineering area
+
+These are not standalone libraries; they are recurring system-design concerns.
+
+My work includes:
+
+- stable operation identity
+- scoped idempotency
+- retry classification
+- outbox patterns
+- conflict states
+- unknown outcomes
+- reconciliation
+- state machines
+- fail-closed integration behavior
+- stale-client handling
+- recovery-oriented UX
+
+See [Reliability Patterns](./RELIABILITY_PATTERNS.md).
+
+---
+
+## Mobile
+
+### Kotlin — Primary for native mobile
+
+My strongest native application implementation evidence is Kotlin.
+
+**Public evidence:** [dthompsonfl/pos](https://github.com/dthompsonfl/pos).
+
+### Jetpack Compose — Primary for current Android UI work
+
+Used for touch-oriented POS and restaurant application surfaces.
+
+**Public evidence:** POS feature modules include Compose-based restaurant, checkout, KDS, shifts, settings, and related operational screens.
+
+### Room — Primary
+
+See relational/persistence section above.
+
+### WorkManager — Primary for durable background synchronization
+
+See jobs/workflow section above.
+
+### React Native / Expo — Working, secondary to Kotlin
+
+Current private source contains a first-party React Native/Expo application with:
+
+- native routing/navigation
+- API integration
+- local storage
+- synchronization
+- network-aware behavior
+- mobile product surfaces
+
+I do not present React Native as equal to my Kotlin/Android depth.
+
+**Evidence type:** private source-validated.
+
+---
 
 ## Payments and commerce
 
 ### Shopify — Working / historical foundation
 
-My software-development path began in 2021 with Shopify work, including:
+My software-development path began in **2021** with Shopify work, including:
 
 - themes
 - storefront customization
-- apps/extensions
-- integrations
+- apps and extensions
 - product/catalog workflows
+- commerce integrations
 - ERP synchronization
 
-### Stripe — Working
+The public [shopifysync1](https://github.com/dthompsonfl/shopifysync1) repository is a thin historical artifact and is not used as proof of current backend depth.
 
-Used in commerce, SaaS, and payment architecture.
+### Stripe — Working / substantial integration experience
 
-Public POS evidence includes:
+Work includes:
 
-- server-side Stripe integration code
-- payment intent/capture/refund boundaries
-- scoped idempotency
-- explicit separation between real and simulated payment behavior
-
-### Square — Working/Adjacent
-
-Used in restaurant/POS integration planning and application work.
-
-I do not present Square integration depth as equivalent to PostgreSQL/TypeScript backend depth.
-
-## Background work and messaging
-
-### Redis — Working
-
-Used for cache/queue/background-job concerns.
-
-### BullMQ — Working
-
-Used in full-stack application background jobs.
-
-Public evidence exists in [ECCB](https://github.com/dthompsonfl/eccb.app).
-
-### Workflow patterns — Primary architectural focus
-
-My design work includes:
-
-- retries
+- server-side payment operations
+- PaymentIntent-oriented flows
+- refunds
+- webhook signature verification
+- provider abstraction
 - idempotency
-- explicit state transitions
-- reconciliation
-- scheduled/background work
-- outbox-style delivery
-- recovery paths
+- payment-state/reconciliation design
+- private production-system integration work
 
-I choose the implementation technology based on system requirements rather than forcing every workflow into one framework.
+**Public evidence:** [POS PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) and [StripePaymentProvider.kt](https://github.com/dthompsonfl/pos/blob/main/payment-stripe/src/main/java/com/enterprise/pos/payment/stripe/StripePaymentProvider.kt).
 
-## Python / Frappe / ERPNext
+**Qualification:** the public POS does not prove a completed/certified real Stripe Terminal reader implementation.
 
-### Python — Working
+### Square — Working integration area
 
-Used in earlier business-application work and operational automation.
+I have current restaurant-system work around Square integration boundaries and configuration.
 
-### Frappe / ERPNext — Working
+**Public POS qualification:** the public Square payment module should not be read as a completed production Square payment implementation; simulated/scaffolded behavior remains.
 
-Experience includes:
+**Private source-validated:** broader current Square integration work exists in the restaurant platform.
 
-- DocTypes/domain modeling
-- operational workflows
-- configuration
-- feature flags
-- scheduled jobs
+### POS / KDS / restaurant systems — Primary domain specialization
+
+Hands-on engineering includes:
+
+- ordering
+- service modes
+- registers
+- menus/catalogs
+- modifiers and pricing
+- payments
+- kitchen/KDS
+- fulfillment
+- shifts
+- employees/permissions
+- devices
+- reporting/reconciliation
+- offline/recovery design
+
+See [Restaurant Operations Case Study](./RESTAURANT_OPERATIONS_CASE_STUDY.md).
+
+---
+
+## Enterprise and operational application platforms
+
+### Frappe — Working
+
+Used for Python-based operational applications, DocTypes, lifecycle hooks, permission boundaries, and scheduled processes.
+
+**Public evidence:** [repair_portal](https://github.com/dthompsonfl/repair_portal).
+
+### ERPNext — Working
+
+Used as an operational/business application platform and integration target.
+
+### Admin / control-plane architecture — Primary
+
+A recurring area of my work is building interfaces and services for:
+
+- settings/configuration
+- permissions
+- operational exceptions
+- lifecycle controls
 - integrations
+- system health
+- data governance
+- owner/admin workflows
 
-Public example: [Repair Portal](https://github.com/dthompsonfl/repair_portal).
+The focus is not only dashboard UI; it is the authoritative services and control boundaries behind the interface.
 
-## AI and automation
+---
 
-### LLM integrations — Working
+## AI, LLMs, and agent-oriented systems
 
-Hands-on work and project architecture includes:
+### AI / LLM integrations — Working
 
-- structured model output
-- tool-using workflows
-- retrieval/context systems
-- AI-assisted operational workflows
-- human-review boundaries
-- agent orchestration concepts
+Private source validates application-owned LLM/provider integration involving:
 
-My preferred architecture keeps critical invariants deterministic even when AI participates in interpretation or reasoning.
+- provider-neutral interfaces
+- OpenAI-compatible HTTP APIs
+- bounded prompt/input handling
+- bounded output handling
+- timeouts
+- transient-only retry policy
+- structured JSON-schema output support
+- text, vision, transcription, and image-capability boundaries
+- local-versus-external provider configuration
 
-### Agentic workflows — Working/Architectural focus
+I treat the model as a probabilistic component inside application-owned constraints.
 
-I am particularly interested in systems where AI can:
+### Agent-oriented workflows — Working
 
-- classify
-- recommend
-- coordinate
-- invoke authorized tools
-- reduce operator work
+Experience includes designing systems where AI can interpret, propose, research, or coordinate work while deterministic services retain authority over:
 
-while deterministic services still enforce permissions, state transitions, and irreversible effects.
+- permissions
+- business invariants
+- irreversible transitions
+- money movement
+- persistence
+- auditability
 
-## Testing and quality
+I do not use “agent” to imply that critical state is delegated to unconstrained model judgment.
 
-Hands-on technologies and practices include combinations of:
+---
 
-- Vitest
-- TypeScript type checking
-- linting
-- unit tests
-- integration tests
-- security-focused tests
-- migration validation
-- API contract checks
-- regression tests
-- build validation
-- repository quality gates
+## Developer platform and delivery
 
-I focus most heavily on tests that protect business invariants and high-cost failure modes.
+### Linux / Ubuntu — Working
 
-## Infrastructure and delivery
+Daily development and server/operations environment experience includes Linux/Ubuntu tooling, services, shell workflows, and application deployment/runtime troubleshooting.
 
-### Linux / Ubuntu — Primary working environment
-
-Used for development, servers, deployment, troubleshooting, and local tooling.
-
-### Git / GitHub — Primary
+### Git / GitHub — Primary workflow tools
 
 Used for:
 
 - source control
-- branch workflows
-- pull requests
-- code review
-- automation
-- CI/CD
+- review
+- branch and release workflows
+- repository automation
+- CI gates
+- issue/PR-driven engineering
+- multi-repository product work
 
-### Monorepos / Turborepo — Working
+### CI/CD and release controls — Working / substantial
 
-Used in multi-application SaaS and platform architectures.
+Current systems include validation gates around combinations of:
 
-### CI/CD — Working
+- type checking
+- linting
+- unit/integration/e2e tests
+- schema/migration checks
+- source integrity
+- route/API contracts
+- security checks
+- build verification
+- release evidence
 
-Used for:
+I distinguish “a repository has a CI check” from “a production environment has been fully certified.”
 
-- build validation
-- test execution
-- release checks
-- repository integrity
-- migration/contract gates
+### Turborepo — Working
 
-## Domain-focused technical experience
+Used in private multi-application/package repositories for workspace orchestration and shared packages.
 
-### Restaurant and POS systems
+### Testing — Primary engineering practice
 
-Hands-on architecture/application work includes:
+Tools and patterns used across current work include:
 
-- orders
-- POS/register workflows
-- KDS
-- menu/catalog
-- modifiers/pricing
-- payments
-- employee permissions
-- shifts
-- hardware boundaries
-- offline persistence
-- synchronization
-- operational recovery
+- Vitest
+- Playwright
+- Node test runner
+- Kotlin/JVM tests
+- repository-specific contract and invariant checks
+- migration verification
+- source/static gates
+- failure-path testing
 
-### SaaS control planes
+---
 
-Work includes:
+## Depth summary
 
-- admin portals
-- customer portals
-- tenant-aware access
-- role/permission systems
-- billing/integration boundaries
-- centralized configuration
+| Area | Depth | Evidence |
+|---|---|---|
+| TypeScript | **Primary** | Public + private |
+| Node.js | **Primary** | Public + private |
+| Next.js | **Primary** | Public + private |
+| React | **Primary** | Public + private |
+| REST/API architecture | **Primary** | Public + private |
+| PostgreSQL | **Primary** | Private source-validated |
+| Prisma | **Primary** | Public + private |
+| MySQL/MariaDB | **Working** | Public + private |
+| PostGIS | **Working** | Private source-validated |
+| MongoDB | **Adjacent** | Explicitly not claimed as equivalent to PostgreSQL |
+| Kotlin | **Primary native** | Public + private |
+| Jetpack Compose | **Primary native** | Public + private |
+| Room | **Primary native persistence** | Public + private |
+| WorkManager | **Primary Android background work** | Public + private |
+| React Native / Expo | **Working** | Private source-validated; secondary to Kotlin |
+| RBAC / server authorization | **Primary** | Public + private |
+| Better Auth | **Working** | Public |
+| Redis | **Working** | Public + private |
+| BullMQ | **Working** | Public |
+| Shopify | **Working / historical foundation** | Historical public + broader work history |
+| Stripe | **Working / substantial integration** | Public + private |
+| Square | **Working integration area** | Public limited + private broader work |
+| Python | **Working** | Public |
+| Frappe / ERPNext | **Working** | Public |
+| AI / LLM integration | **Working** | Private source-validated |
+| Agent-oriented workflows | **Working** | Private source-validated |
+| Linux / Ubuntu | **Working** | Development/operations practice |
+| Git / GitHub | **Primary workflow** | Portfolio and project history |
+| CI/CD / release controls | **Working / substantial** | Public + private |
+| Turborepo | **Working** | Private source-validated |
 
-### Commerce
+## What I intentionally do not claim
 
-Work includes:
+- I do not claim software-development experience before **2021**.
+- I do not convert earlier operating experience into software-engineering years.
+- I do not present MongoDB as equivalent to PostgreSQL depth.
+- I do not present React Native as equivalent to my Kotlin/Android depth.
+- I do not describe simulated provider code as a completed live integration.
+- I do not describe source completeness as proof of hardware, provider, deployment, or scale certification.
+- I do not claim a technology is “expert” merely because it appears in a dependency file.
 
-- Shopify
-- catalog/product flows
-- payment integration
-- commerce-to-ERP synchronization
-
-## Technologies I would not overstate
-
-### MongoDB — Adjacent
-
-My strongest database depth is relational, especially PostgreSQL.
-
-I understand document-database concepts and can work in an existing MongoDB system, but I do **not** present MongoDB as equivalent to my PostgreSQL experience.
-
-That distinction matters because a technical profile should make strengths and learning areas clear instead of turning every technology encountered into an "expert" keyword.
-
-## Current strongest fit
-
-The roles that best match my present engineering profile are those combining:
-
-- TypeScript/Node.js backend work
-- relational data
-- operational workflows
-- integration boundaries
-- reliability
-- restaurant/small-business systems
-- end-to-end product ownership
-
-That is where my current technical depth and prior operational experience reinforce each other most directly.
+The goal of this stack document is to make the depth boundary obvious enough that a technical reviewer can trust the rest of the portfolio.

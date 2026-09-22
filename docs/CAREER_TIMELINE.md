@@ -1,180 +1,243 @@
 # Career & Engineering Timeline
 
-## Summary
-
 My software-development timeline begins in **2021**.
 
-Before that, my career was primarily business and operations. I do **not** present those earlier years as software-engineering experience. I do use that operating background as domain context because it directly affects how I design software for employees, customers, payments, devices, and time-sensitive business workflows.
+My career before and alongside software includes **more than a decade of hands-on business operations**. I do **not** count those operating years as software-engineering tenure. I do treat them as domain experience because they materially affect how I design employee workflows, cash and reconciliation controls, customer-facing processes, exception handling, and software for nontechnical operators.
 
-## 2013–2020 — Business and operations foundation
+## Progression at a glance
 
-Before I began developing software, I spent years operating customer-facing businesses.
+~~~text
+business and operations experience
+        |
+        v
+2021: Shopify development
+        |
+        v
+commerce integrations and ERP workflows
+        |
+        v
+business applications and operational software
+        |
+        v
+full-stack web systems
+        |
+        v
+backend and platform engineering
+        |
+        v
+restaurant systems, SaaS, mobile, reliability, AI/automation
+~~~
 
-That work involved recurring concerns such as:
+## Before 2021 — operating context, not engineering tenure
 
+Before software became a primary technical discipline for me, I had already spent years working directly with customer-facing business operations.
+
+That operating experience includes:
+
+- employee workflows
 - staffing and scheduling
-- customer service
 - cash controls
-- reconciliation
-- operating procedures
+- financial reconciliation
+- customer operations
+- SOPs and repeatable processes
 - exception handling
-- pricing and business rules
-- vendor systems
-- training people with different levels of technical ability
+- high-pressure operating environments
+- translating business rules into steps that nontechnical employees can execute
 
-The biggest lesson I carried into software engineering is that an application can be technically functional while still failing operationally.
+This background is relevant to my engineering because operational systems fail in ways that are different from purely informational software. An order that is duplicated, a payment whose outcome is unknown, a stale register, a permission leak, or a kitchen workflow that cannot recover can become an immediate business problem.
 
-Real users are busy. Networks fail. Instructions are skipped. Devices malfunction. Financial state must still be understandable.
+The distinction remains important: **domain experience informs my engineering; it does not extend my software-development start date backward.**
 
 ## 2021 — Shopify and commerce development
 
-I began software development in **2021** through Shopify customization and development.
+I began software development in **2021** through Shopify customization and commerce work.
 
-My early work included:
+The work included:
 
-- Shopify theme customization
-- storefront behavior
-- app and extension work
+- Shopify themes
+- Shopify apps and extensions
+- storefront customization
 - product and catalog workflows
 - commerce integrations
 - ERP synchronization
-- merchant-specific business logic
-- adapting third-party applications to actual operating requirements
+- business-specific e-commerce workflows
 
-A representative public artifact from this period is [Shopify Sync](https://github.com/dthompsonfl/shopifysync1), an early Shopify/ERP integration repository.
+A surviving public artifact is [dthompsonfl/shopifysync1](https://github.com/dthompsonfl/shopifysync1), whose public repository currently contains only a minimal Shopify-to-ERPNext description. I treat it as chronology evidence, not as proof of my present engineering depth.
 
-This stage taught me to develop in commerce environments where software changes could directly affect customers, transactions, inventory, and revenue.
+### What this stage taught me
 
-## 2022–2024 — Integrations and operational applications
+Commerce work made software consequences concrete early:
 
-I progressively moved beyond storefront customization into broader application and integration work.
+- product identity has to remain consistent across systems;
+- pricing and inventory cannot be treated as decorative UI state;
+- third-party APIs fail and change independently;
+- synchronization requires explicit ownership and conflict behavior;
+- business users need workflows, not raw data models.
 
-Areas of growth included:
+## Expansion — integrations, ERP workflows, and business applications
 
-- APIs and service integrations
-- ERP workflows
-- Python/Frappe applications
-- backend domain modeling
-- workflow automation
-- data synchronization
-- authenticated applications
-- administrative tools
-- operational configuration
-- early AI/LLM integrations and experimentation
+From the initial Shopify work, my development expanded toward systems that coordinated multiple business domains.
 
-The public [Repair Portal](https://github.com/dthompsonfl/repair_portal) is representative of this evolution.
+That included deeper work with:
 
-It models a multi-stage operational workflow:
-
-```text
-intake
-  -> inspection
-  -> service planning
-  -> repair execution
-  -> parts / materials
-  -> quality assurance
-  -> delivery
-```
-
-The project also includes configurable modules, operational settings, data-retention behavior, and external integration points.
-
-## 2025 — Full-stack and platform architecture
-
-My work expanded into larger systems with multiple user surfaces and clearer application boundaries.
-
-I increasingly focused on:
-
-- Next.js
-- React
-- TypeScript
+- backend services and APIs
+- JavaScript and TypeScript
 - Node.js
-- relational database design
+- Python
+- Frappe/ERPNext
+- relational data
+- integrations between commerce and operational systems
+- scheduled/background processing
+- authentication and role-aware behavior
+
+The public [Repair Portal](https://github.com/dthompsonfl/repair_portal) is one inspectable example of this stage of thinking: operational domain entities, role permissions, scheduler hooks, and configurable retention behavior are represented in source.
+
+### Shift in engineering focus
+
+The engineering problem stopped being “customize a storefront” and became “model a business process so that the system remains understandable when the workflow branches, fails, or requires human intervention.”
+
+## Expansion — full-stack product systems
+
+My work then broadened into complete application surfaces rather than isolated integrations.
+
+Typical concerns became:
+
+- Next.js and React application architecture
+- API and service boundaries
+- Prisma and relational schemas
+- authentication
+- authorization and RBAC
+- admin and member/user surfaces
+- background jobs
+- Redis-backed work queues
+- file/document workflows
+- test and release controls
+
+The public [ECCB application](https://github.com/dthompsonfl/eccb.app) is current inspectable evidence for this class of work. Its source includes Next.js/React/TypeScript, Prisma on MySQL/MariaDB, Better Auth configuration, role/permission surfaces, and Redis/BullMQ workers.
+
+## Expansion — backend/platform engineering and stronger data authority
+
+As the systems became more consequential, my focus moved increasingly toward backend and platform concerns:
+
+- TypeScript and Node.js services
+- REST/API contracts
+- PostgreSQL
 - Prisma
-- authentication and RBAC
-- administrative control planes
-- multi-role workflows
-- background jobs and queues
-- payment integrations
-- mobile architecture
-- automated testing
-- release and migration controls
+- migrations and schema safety
+- authentication and server-side authorization
+- multi-role and multi-surface systems
+- tenant/location scoping
+- idempotency
+- job/workflow orchestration
+- auditability
+- failure recovery
+- CI and release gates
+- admin/control-plane architecture
 
-The public [Emerald Coast Community Band Platform](https://github.com/dthompsonfl/eccb.app) demonstrates several of these concerns in one application:
+Current private repositories provide the strongest source-level evidence for my PostgreSQL work. I have inspected PostgreSQL-backed Prisma schemas, PostgreSQL integration tests, migration controls, and application-level data authority in those systems. I keep those implementations private and summarize them here rather than exposing proprietary source.
 
-- public application surface
-- authenticated member portal
-- administrative workspace
-- Better Auth
-- role-based permissions
-- Redis/BullMQ background jobs
-- Prisma-backed data access
-- content/document workflows
+## Expansion — restaurant technology and operational reliability
 
-## 2025–2026 — Restaurant systems, SaaS, mobile, and reliability
+Restaurant systems combine most of the failure modes that pushed my engineering toward backend/platform work.
 
-My current work is centered on larger operational platforms, including restaurant technology and SaaS products.
+My work in this area includes:
 
-Key areas include:
-
-- POS architecture
-- kitchen display workflows
 - ordering
-- menu and pricing configuration
-- payment flows
-- employee and role permissions
-- shifts and tender reconciliation
-- operational devices
-- offline-aware mobile systems
-- server-authoritative state
-- workflow orchestration
-- idempotency and retries
-- migration safety
-- release gates
-- AI-enabled workflows
-- administrative control planes
+- POS/register workflows
+- restaurant floor and service modes
+- menus, modifiers, pricing, and catalog configuration
+- payments
+- Stripe and Square integration work
+- KDS/kitchen state
+- fulfillment flows
+- shifts and cash-control workflows
+- employee roles and permissions
+- devices and hardware boundaries
+- offline-aware behavior
+- retry and reconciliation design
+- operational admin/control planes
 
-The public [Enterprise POS Android](https://github.com/dthompsonfl/pos) repository provides inspectable examples of this progression.
+The public [POS repository](https://github.com/dthompsonfl/pos) exposes a meaningful subset of this work in Kotlin/Jetpack Compose, Room, WorkManager, Ktor backend scaffolding, provider abstractions, KDS, shifts, and restaurant floor flows.
 
-Its public documentation and source include:
+Its status matters: it is an **active prototype / production-hardening repository**, not proof that every payment provider, hardware path, backend persistence layer, and production environment has been fully certified.
 
-- Room-backed local persistence
-- an offline sync outbox
-- idempotency-key handling
-- payment-provider abstractions
-- scoped payment context
-- migration controls
-- explicit release safeguards
-- fail-closed behavior when production integrations are incomplete
+A more complete restaurant operating platform also exists in private source. The public [Restaurant Operations Case Study](./RESTAURANT_OPERATIONS_CASE_STUDY.md) uses that experience in sanitized form while keeping proprietary implementation details private.
 
-The repository is also explicit about unfinished production work. I consider that transparency part of engineering quality.
+## Expansion — native mobile and offline-aware systems
 
-## 2026 — Current direction
+My strongest publicly inspectable native application evidence is Android/Kotlin:
 
-I am increasingly focused on software where backend correctness directly affects real operations.
+- Kotlin
+- Jetpack Compose
+- Room
+- WorkManager
+- local persistence
+- schema migrations
+- queued synchronization
+- device/hardware boundaries
 
-Areas that interest me most:
+I also have current private React Native/Expo implementation work, including native navigation, local storage/synchronization, and API integration. I describe React Native as a **working secondary area**, not as equivalent to my Kotlin/Android depth.
 
+## Expansion — AI and agent-oriented systems
+
+My AI work is application engineering around model capabilities rather than treating an LLM as an authority over core business state.
+
+Private source validates work involving:
+
+- provider-neutral AI boundaries
+- OpenAI-compatible model adapters
+- bounded inputs and outputs
+- timeout and transient-retry handling
+- structured response constraints
+- local-versus-external provider configuration
+- AI-assisted product workflows
+- agent-oriented integration patterns
+
+My preferred safety boundary is:
+
+~~~text
+model interprets or proposes
+        |
+        v
+application policy validates
+        |
+        v
+authorized deterministic service executes
+        |
+        v
+system observes and records result
+        |
+        v
+reconcile or escalate uncertainty
+~~~
+
+Money movement, permissions, irreversible state changes, and core business invariants should not depend on unconstrained model judgment.
+
+## Current positioning
+
+Today I am best represented as a **Backend & Platform Engineer** with end-to-end product capability and unusually direct operational-domain context.
+
+The strongest themes across my work are:
+
+- TypeScript / Node.js backend systems
+- Next.js / React product systems
+- PostgreSQL / Prisma data design
+- APIs and integration boundaries
+- authentication / RBAC
 - restaurant technology
-- workflow orchestration
-- high-consequence business processes
-- payments and transaction state
-- distributed operational state
-- platform engineering
-- autonomous/agentic systems with deterministic guardrails
-- software for small and local businesses
+- POS / KDS / payments
+- operational admin and control planes
+- Kotlin / Android
+- offline and recovery design
+- workflow automation
+- AI/LLM integrations inside deterministic application boundaries
+- testing, security, migration, and release controls
 
-## Experience boundary
+## The experience boundary
 
-My software-development experience begins in **2021**.
+For clarity:
 
-My earlier business experience adds:
-
-- operational judgment
-- domain understanding
-- customer empathy
-- financial-process awareness
-- experience designing for nontechnical users
-
-but I keep that distinct from years of software-development experience.
-
-That distinction is intentional: I would rather make the timeline accurate and let the scope of the engineering work speak for itself.
+- **Software development:** 2021–present
+- **Earlier/parallel business operations:** more than a decade of domain experience
+- **Claim I do not make:** that the operating years are software-engineering years
+- **Claim I do make:** that operating real businesses has materially shaped the systems, failure modes, and user workflows I know how to design for

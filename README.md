@@ -1,129 +1,69 @@
 # Dylan Thompson
 
-**Backend & Platform Engineer building reliable software for real-world operations.**
+**Backend & Platform Engineer**
 
-I began developing software in **2021** through Shopify themes, apps, extensions, integrations, and commerce workflows. Since then, my work has expanded into backend engineering, SaaS platforms, restaurant operating systems, mobile applications, payments, workflow automation, and AI-enabled products.
+I build backend and product systems for operational businesses: APIs, data models, authorization, payments, workflow automation, admin/control planes, mobile clients, and failure-recovery paths. A major area of my work is restaurant technology, where ordering, POS, kitchen, menu, payment, device, employee, and reconciliation workflows all have to stay correct under real operating pressure.
 
-My background also includes more than a decade of hands-on business operations. That experience shapes how I build software: I care about what happens when an integration times out, an employee repeats an action, a payment reaches an uncertain state, connectivity drops, or a busy operator does something the original requirements did not anticipate.
+My software-development timeline begins in **2021**, when I started with Shopify themes, apps, extensions, storefront customization, commerce integrations, catalog workflows, and ERP synchronization. My career before and alongside software includes **more than a decade of hands-on business operations**. I do not count that operating background as software-engineering tenure; I use it as domain knowledge when designing systems for employees and customers who need the software to work during the busiest and least forgiving parts of the day.
 
-## Fast path for engineering reviewers
+## Current engineering focus
 
-If you are reviewing my work for a backend, platform, or restaurant-technology role, start here:
+- **Backend & platform:** TypeScript, Node.js, REST/API architecture, PostgreSQL, Prisma, authentication, authorization, RBAC, jobs, integrations, migrations, observability, and release controls
+- **Product engineering:** Next.js, React, admin/control-plane systems, role-specific operational UX, and end-to-end workflow ownership
+- **Restaurant technology:** ordering, POS/register state, menus, modifiers and pricing, payments, KDS/kitchen workflows, shifts, devices, offline/recovery behavior, and reconciliation
+- **Mobile:** Kotlin, Jetpack Compose, Room, WorkManager; current private React Native/Expo work is secondary to my Android/Kotlin depth
+- **Automation & AI:** deterministic workflow automation, bounded LLM integrations, and agent-oriented systems where model output remains behind application-owned policy and authorization
 
-1. [Restaurant Operations Case Study](docs/RESTAURANT_OPERATIONS_CASE_STUDY.md) — sanitized architecture and failure-mode thinking for ordering, POS, kitchen, payments, permissions, and operational automation.
-2. [Reliability Patterns](docs/RELIABILITY_PATTERNS.md) — idempotency, explicit workflow state, retries, reconciliation, outbox patterns, offline behavior, and observability.
-3. [Enterprise POS Android](https://github.com/dthompsonfl/pos) — public implementation evidence for offline persistence, sync outbox behavior, payment boundaries, scoped idempotency, migrations, and fail-closed release behavior.
-4. [Technical Stack](docs/TECHNICAL_STACK.md) — where I have strong hands-on depth, adjacent experience, and areas I do not overstate.
+## Public proof
 
-## What I build
+| Project | What it demonstrates | Current evidence status |
+|---|---|---|
+| [dthompsonfl/pos](https://github.com/dthompsonfl/pos) | Kotlin/Compose POS, Room persistence, migrations, WorkManager sync, payment boundaries, KDS, restaurant floor flows, shifts, and hardware abstractions | **Active prototype / production hardening.** Strong source-level evidence; not represented as production-certified |
+| [dthompsonfl/eccb.app](https://github.com/dthompsonfl/eccb.app) | Next.js/React/TypeScript application, Prisma on MySQL/MariaDB, Better Auth, RBAC surfaces, Redis/BullMQ workers, public/member/admin application boundaries | **Active application codebase.** Source evidence is public; deployment claims are intentionally separate |
+| [dthompsonfl/repair_portal](https://github.com/dthompsonfl/repair_portal) | Python, Frappe/ERPNext, operational domain modeling, role permissions, scheduled workflow logic, configurable data retention | **Public operational application codebase** |
+| [dthompsonfl/shopifysync1](https://github.com/dthompsonfl/shopifysync1) | Historical Shopify-to-ERP direction from the start of my development path | **Early artifact only.** It corroborates the origin of the work; it is not evidence of my current engineering depth |
 
-- Backend services and APIs
-- Restaurant POS, KDS, ordering, and operations systems
-- SaaS platforms and administrative control planes
-- Workflow orchestration and operational automation
-- Payment and commerce integrations
-- Role-based and multi-tenant systems
-- Offline-aware and recovery-oriented applications
-- AI-assisted workflows and agentic systems
-- Mobile and responsive operational applications
+For the POS repository, useful implementation starting points are the [Room/WorkManager sync engine](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncEngine.kt), [explicit Room migrations](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/db/PosMigrations.kt), [payment router](https://github.com/dthompsonfl/pos/blob/main/payment-api/src/main/java/com/enterprise/pos/payment/router/PaymentRouter.kt), [scoped Stripe backend routes](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt), and [current verification notes](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md).
 
-## Core stack
+## Why operations matters to my engineering
 
-**Backend:** TypeScript · Node.js · PostgreSQL · Prisma · REST APIs  
-**Web:** React · Next.js · TypeScript  
-**Mobile:** Kotlin · Jetpack Compose · React Native architecture  
-**Data & platform:** PostgreSQL · PostGIS · Redis · RBAC · authentication · CI/CD  
-**Commerce:** Shopify · Stripe · Square · POS · payments  
-**AI & automation:** LLM integrations · agent workflows · workflow orchestration
+Operational software is not finished when the happy path renders.
 
-## Engineering focus
+My operating background includes employee workflows, staffing and scheduling, cash controls, financial reconciliation, customer operations, SOPs, exception handling, and processes for nontechnical employees. That changes the questions I ask while engineering:
 
-### Reliability
+- What is the authoritative state?
+- What happens when a request times out after the external side effect may already have occurred?
+- Can the same command arrive twice without charging, firing, or applying it twice?
+- What can continue offline, what may be queued, and what must fail closed?
+- Can a manager understand and recover from an exception without engineering support?
+- Are permissions and location/register scope enforced by the authoritative service rather than trusted from the client?
+- Can the system explain what happened after a failure?
 
-I design operational software around authoritative state, explicit transitions, idempotency, validation, recovery paths, and observable failures.
+The deeper treatment is in [Restaurant Operations Case Study](./docs/RESTAURANT_OPERATIONS_CASE_STUDY.md) and [Reliability Patterns](./docs/RELIABILITY_PATTERNS.md).
 
-### Real-world operations
+## Portfolio map
 
-I build for environments where software affects customers, employees, revenue, payments, devices, and daily business operations.
+- **[Documentation index](./docs/README.md)** — how to read the portfolio and how evidence is classified
+- **[Career timeline](./docs/CAREER_TIMELINE.md)** — operations background → 2021 Shopify → integrations → full-stack → backend/platform → restaurant/mobile/AI systems
+- **[Selected projects](./docs/SELECTED_PROJECTS.md)** — project-by-project scope, evidence, status, and limitations
+- **[Restaurant operations case study](./docs/RESTAURANT_OPERATIONS_CASE_STUDY.md)** — ordering, POS, KDS, payments, offline/recovery, integrations, security, and operational UX
+- **[Reliability patterns](./docs/RELIABILITY_PATTERNS.md)** — idempotency, state machines, retries, outbox, webhooks, concurrency, reconciliation, overload, migrations, and recovery
+- **[Engineering principles](./docs/ENGINEERING_PRINCIPLES.md)** — how I make implementation decisions
+- **[Technical stack](./docs/TECHNICAL_STACK.md)** — technologies grouped by actual depth rather than a keyword inventory
 
-### Canonical systems
+## Evidence and disclosure
 
-I prefer centralized business rules, shared contracts, domain services, and explicit boundaries over duplicated logic spread across applications.
+Some of my most current systems are private because they contain business-specific workflows and production-sensitive implementation details. I use those repositories to validate experience, but this public profile only presents sanitized capability descriptions. I do not publish customer data, credentials, private URLs, proprietary source, internal identifiers, production configuration, or security-sensitive details.
 
-### End-to-end ownership
+Throughout this portfolio I distinguish between:
 
-I work across requirements, architecture, data modeling, backend implementation, interfaces, integrations, security, testing, debugging, and production hardening.
+1. **public implementation evidence** that can be inspected directly;
+2. **private source-validated experience** summarized without exposing proprietary material;
+3. **engineering patterns or principles** that describe how I design systems; and
+4. **adjacent knowledge** that I do not present as equivalent to hands-on depth.
 
-## Selected public work
+That distinction is intentional. Source completeness, architecture quality, and production certification are not the same claim.
 
-### [Enterprise POS Android](https://github.com/dthompsonfl/pos)
+## Opportunities
 
-A multi-module Android/Kotlin POS prototype for restaurant and retail workflows with Compose UI, Room persistence, payment-provider abstractions, hardware abstractions, a Ktor backend module, CI wiring, and explicit production-readiness controls.
-
-Public evidence includes:
-
-- [offline sync/outbox design](https://github.com/dthompsonfl/pos/blob/main/SYNC.md)
-- [payment architecture and idempotency requirements](https://github.com/dthompsonfl/pos/blob/main/PAYMENTS.md)
-- [production-readiness verification](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md)
-
-The repository intentionally documents incomplete production paths rather than presenting scaffolding or simulated integrations as finished.
-
-### [Emerald Coast Community Band Platform](https://github.com/dthompsonfl/eccb.app)
-
-A full-stack platform with public, authenticated member, and administrative surfaces using Next.js, React, TypeScript, Prisma, Better Auth, Redis/BullMQ, RBAC, CMS workflows, and background jobs.
-
-### [Repair Portal](https://github.com/dthompsonfl/repair_portal)
-
-Domain-heavy operational software covering intake, inspection, service planning, repair execution, materials, quality assurance, delivery, retention controls, and configurable business workflows.
-
-### [Shopify Sync](https://github.com/dthompsonfl/shopifysync1)
-
-Early commerce-integration work connecting Shopify and ERP workflows. Shopify development was the starting point of my software-engineering path in 2021.
-
-## Restaurant operations engineering
-
-A major focus of my current work is restaurant technology: ordering, POS, kitchen workflows, menu and pricing configuration, payments, employee permissions, devices, shift operations, and recovery-oriented backend design.
-
-My design principle is simple:
-
-> **Restaurant employees should operate the restaurant — not manage the software.**
-
-Production source for active commercial systems remains private. This repository documents sanitized architecture, engineering decisions, reliability patterns, and public implementation evidence without exposing customer data, credentials, production configuration, or proprietary source.
-
-## Portfolio documentation
-
-- [Documentation Index](docs/README.md)
-- [Career & Engineering Timeline](docs/CAREER_TIMELINE.md)
-- [Selected Projects](docs/SELECTED_PROJECTS.md)
-- [Restaurant Operations Case Study](docs/RESTAURANT_OPERATIONS_CASE_STUDY.md)
-- [Reliability Patterns](docs/RELIABILITY_PATTERNS.md)
-- [Engineering Principles](docs/ENGINEERING_PRINCIPLES.md)
-- [Technical Stack](docs/TECHNICAL_STACK.md)
-
-## Current interests
-
-I am particularly interested in engineering problems involving:
-
-- autonomous operational systems
-- restaurant technology
-- workflow orchestration
-- reliable distributed business processes
-- AI agents with deterministic guardrails
-- payments and transaction systems
-- small-business software
-- developer tooling
-
-## Principles I build around
-
-```text
-Make state explicit.
-Make retries safe.
-Make failures recoverable.
-Keep business rules canonical.
-Automate what the system can know.
-Ask humans only when humans are actually needed.
-```
-
----
-
-**Open to backend, platform, and product-engineering opportunities involving complex operational systems.**
+I am open to backend, platform, product-engineering, and restaurant-technology roles where the work requires ownership across product behavior, data integrity, integrations, reliability, and real operational outcomes.

@@ -1,469 +1,955 @@
-# Restaurant Operations Platform — Sanitized Engineering Case Study
+# Restaurant Operations Case Study
 
-> This document describes architecture, implemented concerns, and engineering decisions from active restaurant-technology work. It intentionally omits proprietary source code, credentials, customer data, production URLs, and business-sensitive details.
+## Purpose
 
-## Evidence boundary
+Restaurant software is a useful test of backend and product engineering because multiple operational surfaces are changing the same business state at the same time.
 
-This case study combines two kinds of material:
+A customer can place an order while a cashier edits another order, a kitchen station is advancing tickets, a manager is changing menu availability, a payment processor is returning asynchronously, a tablet loses connectivity, and a shift is approaching close. The architecture has to preserve business truth across all of those interactions.
 
-1. **Implemented project concerns** from active private restaurant systems and public POS work.
-2. **Engineering patterns** I use to reason about reliability, recovery, and automation.
+This document describes how I approach that problem.
 
-Where public code demonstrates a concept directly, I link to it. Where production source is private, I describe the architecture without presenting private implementation details as public proof.
+It combines three kinds of material:
 
-Related public evidence:
+- **Public implementation evidence** from [dthompsonfl/pos](https://github.com/dthompsonfl/pos)
+- **Sanitized private source-validated experience** from an active restaurant operating platform
+- **Engineering patterns / target architecture** where the discussion goes beyond what the public repository alone proves
 
-- [Enterprise POS Android](https://github.com/dthompsonfl/pos)
-- [POS sync design](https://github.com/dthompsonfl/pos/blob/main/SYNC.md)
-- [POS payment design](https://github.com/dthompsonfl/pos/blob/main/PAYMENTS.md)
-- [POS production-readiness verification](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md)
+It does **not** claim that the public POS repository is fully production-certified. Its own [README](https://github.com/dthompsonfl/pos/blob/main/README.md) and [FINAL_VERIFICATION.md](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md) document remaining provider, persistence, hardware, and environment-specific validation gaps.
 
-## Problem
+---
 
-Restaurant software sits directly in the path of revenue and guest experience.
+## 1. The system I am reasoning about
 
-A single order may touch:
+A restaurant operating system is not one application.
 
-- customer ordering
-- menu availability
-- pricing and modifiers
-- payment processing
-- POS/register state
+~~~text
+customer ordering
+       |
+       v
+ordering / pricing authority
+       |
+       +--------------------+
+       |                    |
+       v                    v
+POS / register          kitchen / KDS
+       |                    |
+       v                    v
+payment state          prep / fulfillment
+       |                    |
+       +---------+----------+
+                 |
+                 v
+        authoritative order state
+                 |
+        +--------+---------+
+        |        |         |
+        v        v         v
+      admin   reporting  reconciliation
+        |
+        v
+menu / roles / devices / configuration
+~~~
+
+Each surface has a different user, latency tolerance, failure mode, and permission model. They still have to converge on shared authoritative state.
+
+---
+
+## 2. Domain architecture
+
+### Ordering
+
+An order is not just a cart total. It is a lifecycle.
+
+Typical concerns include:
+
+- channel: counter, dine-in, takeout, delivery, online
+- location
+- register/station
+- employee/operator
+- customer
+- service mode
+- line items
+- modifiers
+- quantity
+- pricing snapshot
+- tax
+- discounts
+- fulfillment destination
 - kitchen routing
-- fulfillment
-- employee permissions
-- operational devices
-- reporting
-- reconciliation
+- payment status
+- order status
+- revision/version
+- timestamps and audit context
 
-The system therefore has to do more than support a happy-path CRUD workflow.
+**Public evidence:** [FloorScreen.kt](https://github.com/dthompsonfl/pos/blob/main/feature-restaurant/src/main/java/com/enterprise/pos/feature/restaurant/screen/FloorScreen.kt) implements distinct restaurant order-start modes and table selection. [CheckoutViewModel.kt](https://github.com/dthompsonfl/pos/blob/main/feature-sales/src/main/java/com/enterprise/pos/feature/sales/state/CheckoutViewModel.kt) coordinates amount due and tender flow.
 
-It needs to answer questions such as:
+**Engineering consequence:** the authoritative system should derive financial and state transitions from validated order facts. A client should request an action; it should not be able to declare an arbitrary paid total or final state.
 
-- What is the authoritative order state?
-- Was a payment actually captured?
-- Can this operation be safely retried?
-- Did the kitchen receive the order?
-- What happens if connectivity disappears halfway through an action?
-- Which user is allowed to override the state?
-- How does an operator recover without creating duplicate financial effects?
-- How does the system distinguish a temporary integration problem from a real business failure?
+### POS and register state
 
-## Product principle
+A register is an operational actor, not simply a browser session.
 
-The operating principle is:
+Useful identity and scope can include:
 
-> **Restaurant employees should operate the restaurant — not manage the software.**
+- merchant/organization
+- location/store
+- register/station
+- authenticated employee
+- active shift
+- device identity where appropriate
+- current order
+- operation/idempotency identity
 
-Software should resolve deterministic problems automatically where it can, surface exceptions clearly where it cannot, and avoid asking frontline employees to understand implementation details.
+**Public evidence:** [PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) requires merchant, store, and register context for payment operations and scopes supplied idempotency keys using those values.
 
-## High-level domain model
+**Important limitation:** scope fields existing in a request are not, by themselves, proof that production authorization is complete. The service must bind those values to the authenticated principal and allowed resources. The private restaurant platform contains centralized RBAC and runtime authorization work; the public POS should not be used to claim more than its source proves.
 
-```text
-Customer / Ordering
-        |
-        v
-Order Orchestration
-        |
-        +------> Payments
-        |
-        +------> POS / Register State
-        |
-        +------> Kitchen / KDS
-        |
-        +------> Fulfillment
-        |
-        +------> Notifications / Exceptions
-        |
-        v
-Operational Reporting / Reconciliation
-```
+### Menu and catalog
 
-Supporting domains include:
+A restaurant menu is configuration with operational consequences.
 
-- menu/catalog
-- pricing/modifiers
-- employee identity
-- RBAC
-- locations/registers
-- devices
-- shifts
-- cash/tenders
-- configuration
-- audit history
+The domain may include:
 
-## 1. Authoritative workflow state
+- menu
+- section/category
+- item/product
+- variant
+- modifier group
+- modifier option
+- required/optional selection rules
+- minimum/maximum selections
+- base price
+- modifier price delta
+- location availability
+- time/day availability
+- inventory or sold-out status
+- kitchen routing key
+- tax classification
+- fulfillment eligibility
 
-One of the most important architectural rules is that clients should not independently decide that a business workflow is complete.
+The rule I prefer is: **one canonical pricing/menu authority, many projections**.
 
-For example, an order UI may request a transition, but the authoritative service should determine whether the transition is valid.
+POS, online ordering, kiosk, admin, and KDS should not each implement their own interpretation of pricing and modifiers.
 
-Conceptually:
+### Modifiers and pricing
 
-```text
-DRAFT
-  -> SUBMITTED
-  -> PAYMENT_PENDING
-  -> PAID
-  -> ACCEPTED
-  -> IN_PREPARATION
-  -> READY
-  -> FULFILLED
-```
+Modifier behavior is part of the order contract.
 
-Real systems also need explicit exceptional states rather than hiding ambiguity:
+For example:
 
-```text
-PAYMENT_REQUIRES_RECONCILIATION
-FULFILLMENT_BLOCKED
-INTEGRATION_RETRY_PENDING
-CANCEL_REQUESTED
-REFUND_PENDING
-```
+~~~text
+item
+  +-- size group: exactly 1
+  +-- protein group: 0..1
+  +-- toppings: 0..N
+  +-- preparation: required choice
+~~~
 
-The exact state model varies by implementation, but the principle remains:
+The server should validate:
 
-> **Uncertainty should be represented explicitly instead of being converted into false success.**
+- the modifier belongs to the item;
+- the selection cardinality is valid;
+- the option is enabled for the location/channel;
+- the price adjustment is canonical;
+- the resulting order snapshot is auditable.
 
-## 2. Idempotency and duplicate execution
+A stale client may display old menu data. It should not be allowed to force stale pricing into authoritative state.
 
-Restaurant operations are frequently retried accidentally or automatically.
+### Payment state
+
+Payment state deserves its own state machine.
+
+A useful conceptual model is:
+
+~~~text
+CREATED
+  |
+  v
+PROCESSING
+  |
+  +--> SUCCEEDED
+  |
+  +--> FAILED
+  |
+  +--> CANCELED
+  |
+  +--> UNKNOWN / RECONCILIATION_REQUIRED
+~~~
+
+The last state is critical. A timeout does not prove that a provider did nothing.
+
+**Public evidence:**
+
+- [PaymentRouter.kt](https://github.com/dthompsonfl/pos/blob/main/payment-api/src/main/java/com/enterprise/pos/payment/router/PaymentRouter.kt) isolates provider selection from checkout logic.
+- [PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) implements Stripe PaymentIntent creation, capture, refund, lookup, context checking, supplied-key scoping, and signature verification for webhooks.
+- [StripePaymentProvider.kt](https://github.com/dthompsonfl/pos/blob/main/payment-stripe/src/main/java/com/enterprise/pos/payment/stripe/StripePaymentProvider.kt) keeps simulated mode separate and fails closed when real mode lacks the required Terminal bridge.
+
+**Limitations that matter:**
+
+- The public repository does not prove a completed real Stripe Terminal SDK bridge.
+- Public Square and Shopify payment implementations include simulated/scaffolded behavior.
+- Real reader, settlement, disconnect, process-death, and field-network behavior requires external validation.
+- The public webhook handler verifies signatures but does not establish a durable production reconciliation pipeline by itself.
+
+### Kitchen / KDS
+
+The KDS is not a generic order list. It is a projection optimized for food production.
+
+Useful state includes:
+
+- order/ticket
+- station
+- routed items
+- fired/held state
+- preparation status
+- elapsed time
+- urgency
+- ready state
+- recall/re-fire semantics
+- completion/served state
+
+**Public evidence:** [KdsViewModel.kt](https://github.com/dthompsonfl/pos/blob/main/feature-kds/src/main/java/com/enterprise/pos/feature/kds/state/KdsViewModel.kt) reads open orders, filters kitchen-routed sent items, groups by station routing key, computes elapsed urgency, and applies ready/served/recall order-state actions.
+
+A more mature kitchen system should avoid letting a UI gesture directly create ambiguous state. Commands such as fire, bump, recall, hold, and complete should have explicit semantics and stable operation identity where duplication is possible.
+
+### Fulfillment
+
+Fulfillment is the bridge between an order being commercially valid and the customer actually receiving it.
+
+Different channels may need different state:
+
+- dine-in: table / course / served
+- takeout: accepted / preparing / ready / picked up
+- delivery: accepted / preparing / ready / handed off / delivered
+- third-party marketplace: external acknowledgement and reconciliation
+
+This is an area where state explosion is preferable to false certainty. Collapsing every channel into a single generic “complete” flag makes recovery and support harder.
+
+The private restaurant system contains fulfillment and provider-boundary work. This document intentionally keeps that implementation sanitized.
+
+### Shifts and cash controls
+
+Shifts connect employee identity, register responsibility, transaction activity, and closeout.
+
+Useful concepts include:
+
+- opened by
+- register/location
+- opening cash
+- transactions during shift
+- cash movement
+- close request
+- counted cash
+- expected cash
+- variance
+- close reason/notes
+- Z-report
+- tip pooling/summary where applicable
+- manager override or approval
+
+**Public evidence:** [ShiftsViewModel.kt](https://github.com/dthompsonfl/pos/blob/main/feature-shifts/src/main/java/com/enterprise/pos/feature/shifts/state/ShiftsViewModel.kt) implements shift open/close flow and invokes Z-report and tip-pool generation.
+
+**Important limitation:** a UI flow invoking those services does not prove full financial reconciliation correctness. Repository-level reconciliation and field operations remain separate validation concerns.
+
+### Employees and permissions
+
+Restaurant authorization should be task-oriented.
 
 Examples:
 
-- an employee double-taps an action
-- a mobile client retries after a timeout
-- a background worker restarts
-- an external provider sends a duplicate webhook
-- a customer retries after an uncertain response
+- cashier can create and tender permitted orders;
+- kitchen staff can operate assigned kitchen workflows;
+- manager can perform selected overrides;
+- administrator can change configuration;
+- owner has broader business authority;
+- sensitive financial or security actions require stronger permission.
 
-For side-effecting operations, a retry should not create a second financial or operational effect.
+The rule I use is:
 
-Typical design:
+~~~text
+UI permission = guidance
+server permission = authority
+~~~
 
-```text
-request
-  |
-  +--> stable operation identity
-  |
-  +--> lookup prior execution
-          |
-          +--> completed -> return recorded result
-          |
-          +--> processing -> return/observe current state
-          |
-          +--> absent -> execute once
-```
+The client can hide a button, but the authoritative service must still evaluate identity, role/permission, resource scope, and current state.
 
-### Public evidence
+Private restaurant source validates centralized RBAC implementation and server-side authorization work. Public ECCB source separately provides inspectable examples of Better Auth and permission-management surfaces, but it is not a restaurant system and should not be conflated with restaurant deployment evidence.
 
-The public POS repository documents:
+### Devices and hardware
 
-- an offline sync outbox with idempotency keys
-- payment retries requiring durable idempotency
-- merchant/store/register-scoped payment idempotency
+Operational devices create a second reliability boundary.
 
-See:
+Potential devices include:
 
-- [SYNC.md](https://github.com/dthompsonfl/pos/blob/main/SYNC.md)
-- [PAYMENTS.md](https://github.com/dthompsonfl/pos/blob/main/PAYMENTS.md)
-- [FINAL_VERIFICATION.md](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md)
+- POS tablets
+- KDS displays
+- receipt printers
+- kitchen printers
+- cash drawers
+- scanners
+- payment terminals
+- bump bars
+- network adapters
 
-## 3. Payment uncertainty
+A useful abstraction separates:
 
-A dangerous payment failure mode is:
+~~~text
+business command
+      |
+      v
+application port/interface
+      |
+      v
+device/provider adapter
+      |
+      v
+physical transport
+~~~
 
-1. the provider receives a request,
-2. connectivity fails,
-3. the client does not receive the final result,
-4. the user retries,
-5. the system creates a duplicate charge.
+**Public evidence:** [EscPosPrinter.kt](https://github.com/dthompsonfl/pos/blob/main/hardware/src/main/java/com/enterprise/pos/hardware/escpos/EscPosPrinter.kt) contains USB, Bluetooth, network, and simulated printer transports.
 
-A safer system treats uncertain provider state as something to reconcile.
+The existence of transport code is not a claim that every physical device combination has been field-certified.
 
-```text
-local request
+### Reporting and reconciliation
+
+Reporting should be downstream from authoritative transactions, not a second source of business truth.
+
+Useful outputs include:
+
+- sales totals
+- tender totals
+- shift/Z reports
+- voids/refunds
+- discounts/overrides
+- tax
+- tips
+- payment/provider discrepancies
+- orders needing reconciliation
+- device/integration exceptions
+
+For financial reports, I prefer rebuilding from durable business facts where feasible rather than trusting mutable aggregates with unclear provenance.
+
+---
+
+## 3. Authoritative state
+
+The most important architectural question is: **which component is allowed to decide the truth?**
+
+A useful model is:
+
+~~~text
+client intent
     |
     v
-provider operation
+authenticated command boundary
     |
-    +--> confirmed --------> record authoritative result
+    v
+authorization + scope
     |
-    +--> declined ---------> record failure
+    v
+validate current state / revision
     |
-    +--> unknown ----------> reconciliation required
-```
+    v
+apply canonical business rules
+    |
+    v
+transaction / external operation
+    |
+    v
+persist authoritative result
+    |
+    v
+publish/project for POS, KDS, admin, reporting
+~~~
 
-"Unknown" is a valid technical state.
+This reduces the chance that each client invents its own version of the business.
 
-Pretending an uncertain external operation cleanly failed can be more dangerous than acknowledging that reconciliation is required.
+### Client responsibilities
 
-### Public evidence
+Clients are good at:
 
-The POS project includes server-side Stripe integration scaffolding and explicit release safeguards. Card-present payment paths fail closed when a real Terminal SDK bridge is unavailable rather than silently substituting simulated success.
+- collecting intent
+- local interaction state
+- rendering cached projections
+- optimistic treatment of low-risk reversible actions
+- explaining pending/error/conflict state
 
-## 4. Kitchen workflows
+Clients should not be trusted to invent:
 
-Kitchen state is operational, not cosmetic.
+- authorization
+- canonical price
+- final payment success
+- irreversible fulfillment state
+- financial reconciliation
+- global menu authority
 
-A KDS needs enough context to answer:
+---
 
-- what was ordered
-- when it entered the kitchen
-- what station owns it
-- whether it was acknowledged
-- whether it changed after submission
-- whether it is blocked
-- whether it is ready
-- whether customer-facing state reflects reality
+## 4. Idempotency and duplicate commands
 
-The interface should minimize interaction cost.
+Operational systems naturally redeliver work.
 
-A KDS is not a general-purpose administrative dashboard.
+Causes include:
 
-## 5. Offline-aware operation
+- a cashier taps twice;
+- a client times out and retries;
+- a background worker restarts;
+- a webhook is redelivered;
+- a device reconnects and flushes queued work;
+- two network paths race.
 
-Some restaurant workflows need to remain useful during transient connectivity failures.
+### Business-operation identity
 
-Offline capability does **not** mean every operation should proceed independently.
+For high-consequence commands I prefer an idempotency key tied to the logical operation.
 
-I separate actions into three risk categories.
+~~~text
+operation identity
+    |
+    +-- tenant/location scope
+    +-- business object
+    +-- command type
+    +-- client-generated stable operation ID
+~~~
 
-### Locally safe
+A server implementation then needs an atomic guarantee:
 
-Examples may include:
+~~~text
+BEGIN
+  insert operation record with UNIQUE(scope, operation_id)
+  if duplicate:
+      return/observe prior result
+  perform or record transition
+  persist result
+COMMIT
+~~~
 
-- reading cached menu data
-- maintaining local UI state
-- drafting an order
-- viewing previously synchronized operational information
+### Public POS evidence and limitation
 
-### Queueable with reconciliation
+[PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) scopes a supplied idempotency key by merchant/store/register before passing it to Stripe operations.
 
-Examples may include:
+However, if the caller omits a key, the current route generates a random UUID. That protects uniqueness but **does not make a later independent retry the same logical operation**. A production client therefore needs to provide and reuse a stable key for the business command.
 
-- selected non-financial state updates
-- telemetry
-- local operational events
-- deferred synchronization with deterministic conflict rules
+Likewise, [SyncOutboxEntity.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncOutboxEntity.kt) gives each outbox event a unique key, and the retry engine reuses that event. This supports per-event deduplication; it should not be overstated as a complete cross-client business-operation idempotency design.
 
-### Must fail closed or require authoritative connectivity
+---
 
-Examples commonly include:
+## 5. Idempotency races
 
-- payment capture
-- authorization-sensitive overrides
-- irreversible external-provider operations
-- actions where duplicate execution has financial consequences
+The dangerous version of idempotency is:
 
-### Public evidence
+~~~text
+if key not found:
+    perform side effect
+    save key
+~~~
 
-The POS repository documents an offline-first local persistence model using Room plus a synchronization outbox processed in the background.
+Two concurrent requests can both pass the first check.
 
-That implementation is useful precisely because local capability is separated from server-authoritative or provider-authoritative operations.
+Correctness generally needs one of:
 
-## 6. Permissions and manager overrides
+- unique database constraint plus transaction
+- atomic compare-and-set
+- serialized command handling
+- provider-supported idempotency combined with local durable result tracking
 
-Restaurant permissions often require more granularity than a single admin/non-admin split.
+### Public POS limitation
 
-Typical identities include:
+The current public backend [SyncEventStore.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/storage/SyncEventStore.kt) is explicitly an in-memory development store and documents the need for a production database unique constraint. It is useful architecture evidence, but it is not the production atomicity proof.
 
-- employee
-- kitchen
-- shift lead
-- manager
-- owner
-- device/service identity
+---
 
-Sensitive actions may require:
+## 6. Retry taxonomy
 
-- explicit permission
-- manager override
-- reason capture
-- audit entry
-- server-side enforcement
+“Retry on error” is too coarse.
 
-UI visibility is not authorization.
+### Safe/retryable
 
-## 7. Menu and configuration consistency
+Examples:
 
-Menus, prices, modifiers, taxes, availability, and location settings can drift if each client maintains independent business rules.
+- DNS/network interruption before request delivery is known
+- 429/rate limit with retry-after handling
+- transient 5xx
+- queue worker process interruption when the command is idempotent
 
-The preferred architecture is:
+### Permanent / do not retry blindly
 
-```text
-canonical configuration/domain services
-        |
-        +--> public ordering
-        +--> POS
-        +--> KDS
-        +--> admin
-        +--> mobile
-        +--> reporting
-```
+Examples:
 
-This reduces disagreement between operator-facing and customer-facing systems.
+- malformed input
+- permission denial
+- invalid state transition
+- unsupported provider operation
+- stale revision that requires refresh/conflict handling
 
-## 8. Integration boundaries
+### Unknown outcome / reconcile
 
-External systems should be isolated behind explicit boundaries.
+Examples:
 
-Examples include:
+- request timed out after the provider may have accepted it
+- local process died after capture but before local persistence
+- webhook and synchronous result disagree
+- external settlement exists with missing local finality
 
-- payment processors
-- POS providers
-- delivery providers
-- messaging services
-- identity systems
-- hardware integrations
+This category must exist explicitly. Treating “unknown” as “failed” invites duplicate money movement.
 
-A useful integration boundary should make it clear:
+---
 
-- what data leaves the system
-- what identifier correlates the request
-- whether the operation is retryable
-- whether idempotency is available
-- how external state is reconciled
-- what happens when the provider is unavailable
+## 7. External provider uncertainty
 
-This is especially important when an external provider has different consistency or failure semantics than the local application.
+Payments are the clearest example, but the same issue appears in:
 
-## 9. Observability
+- delivery marketplaces
+- messaging providers
+- identity providers
+- tax services
+- hardware controllers
+- external POS/catalog providers
 
-Operational systems need to distinguish among:
+The application should preserve enough information to ask:
 
-- customer input error
-- operator error
-- invalid application state
-- authorization failure
-- integration failure
-- infrastructure failure
-- retryable failure
-- reconciliation-required state
+1. What did we intend?
+2. What did we send?
+3. What operation identity did we use?
+4. What did the provider return?
+5. Did we persist that result?
+6. What does the provider say now?
+7. Can we safely retry?
+8. Does a person need to reconcile it?
 
-Useful correlation context can include:
+A reconciliation state is a feature, not an admission of failure.
 
-- order ID
-- location/register context
-- provider operation ID
-- workflow state
-- transition attempted
-- retry count
-- reconciliation status
+---
 
-The goal is not just logging. The goal is being able to answer:
+## 8. Outbox and asynchronous work
 
-> **What happened to this business operation, and what should happen next?**
+If a local transaction and a later external dispatch must remain logically connected, I prefer a durable outbox.
 
-## 10. AI and operational automation
+~~~text
+database transaction
+  - update business state
+  - insert outbox row
 
-AI can be useful in restaurant operations for tasks such as:
+worker
+  - claim row
+  - dispatch
+  - record outcome
+  - retry/reconcile according to policy
+~~~
 
-- classification
-- exception triage
-- support summarization
-- recommendation
-- workflow assistance
-- anomaly explanation
+Consumers must still be idempotent because delivery may be at least once.
 
-But critical business constraints should remain deterministic.
+**Public evidence:** [SyncOutboxEntity.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncOutboxEntity.kt) and [SyncEngine.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncEngine.kt) implement a Room-backed local outbox and WorkManager retry/conflict handling.
 
-The model should not be the sole authority deciding whether:
+**Boundary:** the device outbox is real source evidence. The public backend's durable production persistence remains incomplete.
 
-- money moved
-- an order legally changed state
-- a user has permission
-- an irreversible action should execute
+---
 
-A pattern I prefer:
+## 9. Offline behavior
 
-```text
-AI interprets / proposes
+“Offline-first” should not mean “pretend every operation is safe offline.”
+
+I classify commands by consequence.
+
+| Class | Example | Expected behavior |
+|---|---|---|
+| **Locally safe** | browse cached menu, edit local draft | continue locally with visible freshness state |
+| **Queueable** | selected nonfinancial mutation with stable operation identity | persist first, replay later, show pending/conflict state |
+| **Requires authority** | payment capture, permission-sensitive override | fail closed or require authoritative connection |
+| **Unknown outcome** | provider call timed out after dispatch | do not blindly repeat; reconcile |
+
+Private restaurant/Android source includes explicit offline capability classification and durable command/outbox work. Public POS source demonstrates the local Room + WorkManager side of the model.
+
+### Operator UX for offline state
+
+Operators need language such as:
+
+- Saved on this device; waiting to sync
+- Menu may be stale
+- Payment unavailable while offline
+- Action sent; final outcome still being confirmed
+- Conflict requires manager review
+
+“Something went wrong” is not enough.
+
+---
+
+## 10. KDS reliability
+
+Kitchen state should be durable and command-oriented.
+
+Important cases include:
+
+- duplicate fire
+- stale POS resubmission
+- station reroute
+- hold/release
+- bump/complete
+- recall
+- device restart
+- network loss
+- one station unavailable while others continue
+
+The system should be able to distinguish:
+
+~~~text
+order exists
+ticket projection exists
+fire command accepted
+station acknowledged
+item completed
+order ready
+order served/fulfilled
+~~~
+
+Those are different facts.
+
+The private restaurant system goes further than the public POS in this area; public source proves ticket projection and state actions but should not be interpreted as complete distributed-kitchen acknowledgement semantics.
+
+---
+
+## 11. Integration boundaries
+
+I prefer provider-specific behavior to terminate at an adapter/service boundary.
+
+### Payment processors
+
+Domain code should not understand provider SDK objects.
+
+~~~text
+checkout service
+    |
+    v
+payment port
+    |
+    +--> Stripe adapter
+    +--> Square adapter
+    +--> other provider adapter
+~~~
+
+Provider tokens and credentials should remain server-side except for intentionally publishable/session-scoped material.
+
+### External POS / catalog systems
+
+Synchronization should preserve:
+
+- external identity
+- local identity
+- mapping/version
+- source-of-truth decision
+- conflict policy
+- last observed state
+- retry/reconciliation state
+
+### Delivery systems
+
+A delivery integration should not bypass the canonical order lifecycle merely because the external provider has a different status model. Translate at the boundary.
+
+### Messaging
+
+Notification failure should generally not roll back a successful order or payment. Messaging is a dependent workflow with its own retry/error policy.
+
+### Hardware
+
+Business rules should not import printer/scanner/terminal transport details. Hardware should be behind ports with explicit unavailable/error states.
+
+### Identity providers
+
+Authentication proves identity; application authorization still decides whether that identity may perform the restaurant action.
+
+---
+
+## 12. Security as correctness
+
+For restaurant systems, security mistakes become operational mistakes.
+
+### Server-side authorization
+
+Every protected mutation should evaluate:
+
+- authenticated identity
+- permission/role
+- tenant/merchant
+- location
+- register/device where relevant
+- target resource
+- current state
+- step-up/override policy where required
+
+### Location and register scope
+
+A valid user at one location should not automatically be able to mutate another location merely by changing a client-supplied identifier.
+
+Scope should be resolved and checked on the server.
+
+### Manager overrides
+
+An override is an auditable command, not a bypass.
+
+Useful fields include:
+
+- requesting operator
+- authorizing manager
+- permission used
+- reason
+- original value/state
+- resulting value/state
+- timestamp
+- register/location
+- related order/payment/shift
+
+### Least privilege
+
+Cashier, kitchen, manager, administrator, and owner workflows should receive the minimum authority needed for the task.
+
+### Secret isolation
+
+Provider credentials, signing secrets, service tokens, and database credentials should not be shipped to browser/mobile clients.
+
+### Auditability
+
+Sensitive state changes should be attributable after the fact. Security logs and business audit records serve different purposes and may require different retention.
+
+---
+
+## 13. Role-specific operational UX
+
+The same information should not be presented identically to every user.
+
+### POS
+
+Optimize for:
+
+- speed
+- large touch targets
+- minimal navigation
+- clear price/payment state
+- immediate recoverable errors
+- visible offline/pending state
+- manager escalation without abandoning the transaction
+
+### KDS
+
+Optimize for:
+
+- glanceability
+- station relevance
+- elapsed time
+- urgency
+- large state-changing controls
+- minimal typing
+- clear recovery after reconnect/restart
+
+### Admin
+
+Optimize for:
+
+- configuration clarity
+- safe defaults
+- impact previews
+- permissions
+- audit/history
+- exception queues
+- granular control without requiring technical vocabulary
+
+### Owner dashboard
+
+Optimize for:
+
+- business outcome
+- exception prioritization
+- reconciliation
+- trend/context
+- actionability
+
+An owner does not need a raw queue depth. They may need: “Three payments need reconciliation before close.”
+
+---
+
+## 14. Business-level observability
+
+Infrastructure telemetry matters, but operational software also needs business signals.
+
+Examples:
+
+- orders stuck in nonterminal state
+- payment attempts by provider/result
+- reconciliation-required payments
+- duplicate/idempotent replays
+- KDS ticket age
+- sync backlog by device/location
+- failed or conflicted outbox entries
+- manager overrides
+- void/refund rate
+- menu sync freshness
+- device heartbeat/failure
+- shift-close discrepancies
+
+A useful operational event should answer **which business workflow is affected**, not only which process emitted a log line.
+
+---
+
+## 15. Timeouts, backpressure, and overload
+
+### Timeouts
+
+External calls need explicit deadlines.
+
+After timeout, the system must know whether the correct next step is:
+
+- retry
+- poll/lookup
+- reconcile
+- cancel
+- escalate
+
+### Backpressure
+
+If a provider or downstream service is slow, the system should not create unlimited work.
+
+Possible controls include:
+
+- queue caps
+- worker concurrency limits
+- rate limits
+- circuit breakers
+- priority classes
+- admission control
+- dropping/deferment of noncritical telemetry
+
+During a restaurant rush, order/payment paths should not compete equally with low-value background work.
+
+Public ECCB source provides a separate inspectable example of Redis/BullMQ queues and worker concurrency in [src/lib/jobs/queue.ts](https://github.com/dthompsonfl/eccb.app/blob/main/src/lib/jobs/queue.ts). That is queue implementation evidence, not a claim that ECCB models restaurant workloads.
+
+---
+
+## 16. AI and automation
+
+AI can be valuable in restaurant operations for interpretation, classification, support, suggested configuration, anomaly explanation, or workflow assistance.
+
+I do not want a model directly deciding money movement, permissions, or irreversible state.
+
+The boundary I prefer is:
+
+~~~text
+AI interprets or proposes
         |
         v
 deterministic policy validates
         |
         v
-authorized tool/service executes
+authorized service/tool executes
         |
         v
-result is observed
+system observes the actual result
         |
         v
-reconcile / escalate if necessary
-```
+reconcile or escalate if uncertain
+~~~
 
-AI adds flexibility; application logic retains control of business invariants.
+Examples:
 
-## 11. Operator experience
+- AI may map an operator's natural-language request to a proposed menu change.
+- Deterministic code validates that the item exists, the requested change is legal, the actor has permission, and the price is within policy.
+- A typed service performs the mutation.
+- The resulting state is read back and audited.
 
-Reliability is partly a user-interface problem.
+Private source validates bounded LLM provider integration work, including timeout/retry classification, structured response constraints, and provider abstraction. The portfolio does not expose that proprietary implementation.
 
-When something fails, the operator should not need to infer technical state from generic messages.
+---
 
-A useful exception flow answers:
+## 17. Testing the failure paths
 
-1. What happened?
-2. Is the business operation complete?
-3. Is it safe to retry?
-4. Will the system retry automatically?
-5. Is manager action required?
-6. Is customer communication required?
+A restaurant system needs tests around what happens when dependencies misbehave.
 
-The operator interface should expose the minimum information required to make the correct decision.
+High-value cases include:
 
-## 12. Security and data boundaries
+- duplicate order submission
+- duplicate payment command
+- timeout before provider response
+- provider success followed by local persistence failure
+- webhook redelivery
+- webhook before synchronous response
+- stale order revision
+- simultaneous terminal updates
+- device offline during mutation
+- restart with queued outbox work
+- register/location mismatch
+- unauthorized manager action
+- shift close racing with a new transaction
+- migration from an older offline database version
+- printer disconnected after payment
+- KDS unavailable while an order is accepted
 
-Operational convenience should not bypass security.
+The goal is not just “the request returned 200.” The goal is to prove the remaining business state is correct and recoverable.
 
-Important controls include:
+---
 
-- server-side authorization
-- location/register scoping
-- least-privilege roles
-- secret isolation
-- signed/validated provider callbacks
-- secure device identity
-- no raw production provider secrets in client applications
-- auditability for sensitive overrides
+## 18. Public proof map
 
-The public POS project explicitly documents that provider secrets should remain server-side and should not be stored in Android client configuration.
+The following public files are the most useful evidence for the patterns discussed above:
 
-## 13. What I optimize for
+| Concern | Public evidence |
+|---|---|
+| Local durability / retry | [SyncEngine.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncEngine.kt) |
+| Outbox schema | [SyncOutboxEntity.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncOutboxEntity.kt) |
+| Mobile schema migration | [PosMigrations.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/db/PosMigrations.kt) |
+| Payment abstraction | [PaymentRouter.kt](https://github.com/dthompsonfl/pos/blob/main/payment-api/src/main/java/com/enterprise/pos/payment/router/PaymentRouter.kt) |
+| Payment context/idempotency/webhook signature | [PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) |
+| Real vs simulated Stripe boundary | [StripePaymentProvider.kt](https://github.com/dthompsonfl/pos/blob/main/payment-stripe/src/main/java/com/enterprise/pos/payment/stripe/StripePaymentProvider.kt) |
+| Checkout orchestration | [CheckoutViewModel.kt](https://github.com/dthompsonfl/pos/blob/main/feature-sales/src/main/java/com/enterprise/pos/feature/sales/state/CheckoutViewModel.kt) |
+| Restaurant floor/order modes | [FloorScreen.kt](https://github.com/dthompsonfl/pos/blob/main/feature-restaurant/src/main/java/com/enterprise/pos/feature/restaurant/screen/FloorScreen.kt) |
+| Kitchen projection | [KdsViewModel.kt](https://github.com/dthompsonfl/pos/blob/main/feature-kds/src/main/java/com/enterprise/pos/feature/kds/state/KdsViewModel.kt) |
+| Shift workflow | [ShiftsViewModel.kt](https://github.com/dthompsonfl/pos/blob/main/feature-shifts/src/main/java/com/enterprise/pos/feature/shifts/state/ShiftsViewModel.kt) |
+| Hardware transport boundary | [EscPosPrinter.kt](https://github.com/dthompsonfl/pos/blob/main/hardware/src/main/java/com/enterprise/pos/hardware/escpos/EscPosPrinter.kt) |
+| Public status / known gaps | [README.md](https://github.com/dthompsonfl/pos/blob/main/README.md), [FINAL_VERIFICATION.md](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md) |
 
-- predictable state
-- safe retries
-- explicit failure
-- recoverability
-- low operator cognitive load
-- canonical business rules
-- strong authorization boundaries
-- observable workflows
-- minimal unnecessary manual intervention
-- honest production-readiness status
+---
 
-## 14. What remains environment-dependent
+## 19. Production reality
 
-Architecture alone does not prove production behavior.
+Source completeness is not production proof.
 
-A restaurant system still requires real-world validation of:
+A restaurant system can look complete in code and still be unqualified until it has been tested with:
 
-- payment hardware
-- printer/scanner/drawer hardware
-- provider credentials
-- network behavior
-- concurrency under service load
-- recovery after device/process restart
-- webhook delivery
-- kitchen-device ergonomics
-- migration/upgrade behavior
-- operational training
+- real payment credentials
+- real payment readers/terminals
+- printer models and network transports
+- scanners and cash drawers
+- bump bars or kitchen input devices
+- actual deployment networks
+- network loss and recovery
+- process death and restart
+- duplicate/replayed provider events
+- production secrets and rotation
+- representative concurrency/load
+- schema/data migration rollout
+- monitoring/alerting
+- backup/restore
+- operator training
+- shift-close/reconciliation procedures
+- rollback
 
-I treat those as explicit validation requirements rather than assuming source-level completeness equals production readiness.
+I treat those as separate acceptance gates rather than allowing architecture language to imply they happened.
 
-## Related documents
+---
 
-- [Reliability Patterns](./RELIABILITY_PATTERNS.md)
-- [Engineering Principles](./ENGINEERING_PRINCIPLES.md)
-- [Selected Projects](./SELECTED_PROJECTS.md)
-- [Technical Stack](./TECHNICAL_STACK.md)
+## 20. What this case study demonstrates
+
+The core engineering idea is that restaurant software should preserve **operational truth**.
+
+That means:
+
+- explicit state instead of ambiguous flags;
+- one canonical owner for business rules;
+- idempotent commands rather than hope that requests arrive once;
+- retries classified by consequence;
+- reconciliation for uncertain external outcomes;
+- local/offline capability based on risk;
+- server-side authorization and scope;
+- provider/hardware boundaries;
+- operator-visible recovery state;
+- business-level observability;
+- deterministic policy around AI;
+- production claims that stop where the evidence stops.
+
+That combination—backend correctness plus knowledge of how restaurant operations actually fail—is the part of this domain I am most interested in continuing to build.

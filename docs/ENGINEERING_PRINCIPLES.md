@@ -1,316 +1,539 @@
 # Engineering Principles
 
-These are the principles I use when designing, reviewing, and hardening software.
+These principles describe how I turn operational requirements into implementation decisions. They are not slogans or claims that every repository applies every principle identically. Where public code demonstrates a pattern, I link it; where the principle is broader than the public evidence, I label it as an engineering standard I apply.
 
-They are especially important in systems where software affects revenue, employees, customers, payments, devices, or operational continuity.
+## 1. Solve the operating problem, not the screen
 
-## 1. Solve the operational problem, not just the ticket
+A feature request is often phrased as a screen or button:
 
-A requested feature is often a symptom.
+- “add a refund button”
+- “let the kitchen recall an order”
+- “make the register work offline”
+- “let managers change a price”
 
-Before implementing, I try to understand:
+The actual engineering problem is larger.
 
-- who is doing the work
-- what outcome they need
-- what information they actually have
-- what can go wrong
-- what the software can determine automatically
-- what truly requires human judgment
-- what happens if nothing is changed
+For a refund, I want to know:
 
-The goal is not to digitize unnecessary work. It is to remove it where possible.
+- who may initiate it;
+- which payment state permits it;
+- whether the provider operation is idempotent;
+- what happens after a timeout;
+- how partial refunds are represented;
+- how the local system learns the provider result;
+- what appears in reconciliation and audit history.
 
-## 2. Make state explicit
+I start from the business transition and its failure modes, then design the UI around that contract.
 
-Hidden state creates ambiguity.
+---
 
-For important workflows, state should be:
+## 2. Make important state explicit
 
-- defined
-- validated
-- observable
-- auditable where appropriate
-- transitionable only through known rules
+If a distinction changes behavior, recovery, authorization, or reporting, it should usually exist in the model.
 
-This is especially important for:
+I prefer:
 
-- payments
-- orders
-- approvals
-- fulfillment
-- shifts
-- synchronization
-- background jobs
+~~~text
+PROCESSING
+SUCCEEDED
+FAILED_RETRYABLE
+FAILED_FINAL
+RECONCILIATION_REQUIRED
+~~~
 
-## 3. Keep business rules canonical
+over a single boolean such as:
 
-If the same business rule is independently implemented in:
+~~~text
+paymentSuccessful = true/false
+~~~
 
-- web
-- mobile
-- POS
-- KDS
-- admin
-- background jobs
+The explicit model makes invalid transitions easier to reject and uncertain outcomes easier to represent honestly.
 
-then those implementations will eventually disagree.
+**Public example:** [KdsViewModel.kt](https://github.com/dthompsonfl/pos/blob/main/feature-kds/src/main/java/com/enterprise/pos/feature/kds/state/KdsViewModel.kt) works with explicit order states rather than a generic kitchen-complete flag.
 
-I prefer business rules to live behind shared domain services, contracts, or server-authoritative APIs where practical.
+---
 
-## 4. Make retries safe
+## 3. Give each business rule one canonical owner
 
-Networks fail. Users double-click. Workers restart. Providers resend events.
+Duplicated business rules become inconsistent business rules.
 
-A robust system assumes important operations may be delivered more than once.
+Examples that should have clear ownership:
 
-For side-effecting workflows, idempotency and reconciliation should be considered during design rather than added after duplicate effects occur.
+- price calculation
+- modifier validity
+- authorization
+- payment transition rules
+- fulfillment transitions
+- menu availability
+- shift-close rules
+- retry policy
 
-## 5. Represent uncertainty honestly
+Clients may project or preview canonical rules, but they should not become independent authorities.
 
-"Unknown" can be a real system state.
+For example:
 
-If an external provider may have completed an operation but the application cannot prove the result, converting uncertainty into "failed" can create worse behavior than explicitly requiring reconciliation.
+~~~text
+POS ----------+
+online order -+--> canonical pricing service --> persisted order snapshot
+admin --------+
+~~~
 
-False certainty is dangerous in payment and fulfillment systems.
+This matters most when multiple clients evolve at different speeds.
 
-## 6. Fail closed when false success is dangerous
+---
 
-I would rather make an unavailable production capability obvious than silently substitute:
+## 4. Design commands to be idempotent
 
-- simulated payments
-- debug authentication
-- fake hardware success
-- destructive migration fallback
-- insecure defaults
-- unverified external state
+Networks retry. Users double-tap. Workers restart. Webhooks redeliver.
 
-Development conveniences should not accidentally become production behavior.
+For consequential mutations, I want a stable operation identity and an atomic way to claim or observe it.
 
-## 7. Design recovery with the happy path
+The implementation should answer:
 
-For important workflows, implementation planning should include:
+- What is the logical business operation?
+- Which scope makes that identity unique?
+- Can two requests race?
+- Where is the uniqueness enforced?
+- Is the prior result durable?
+- What happens if the process dies after an external side effect?
 
-- retries
-- timeouts
-- duplicate events
-- partial failure
-- interrupted workflows
-- stale clients
-- provider disagreement
-- reconciliation
-- operator recovery
+**Public example:** [PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) scopes client-supplied payment idempotency keys by merchant/store/register.
 
-Recovery is part of the feature.
+**Important caveat:** when that public route has no caller-supplied key, it generates a new UUID. That is unique, but it is not a stable business-operation identity across a later independent retry. I treat that distinction as part of the design review, not something to hide.
 
-## 8. Authorization belongs at the authoritative boundary
+---
 
-Hiding a button is presentation logic, not security.
+## 5. Model uncertainty instead of converting it into failure
 
-Protected operations should validate:
+An external timeout does not prove the external system did nothing.
 
-- identity
-- tenant/location/register context
-- role and permission
-- current resource state
-- business constraints
+For payments, delivery providers, messaging, hardware, or other integrations, I distinguish:
 
-at the server or authoritative service boundary.
+- known success
+- known failure
+- retryable transport failure
+- unknown external outcome
+- reconciliation required
 
-## 9. Optimize interfaces for the environment
+If the system cannot prove whether an irreversible action happened, it should preserve evidence and reconcile before repeating it.
 
-A kitchen display, POS terminal, owner dashboard, and configuration portal have different interaction requirements.
+This is especially important for money movement.
 
-The correct interface depends on:
+---
 
-- time pressure
-- device
-- user role
-- error cost
-- frequency of use
-- information density
-- training level
-- environment
+## 6. Fail closed when a production dependency is missing
 
-Operational software should not force every user into the same generic dashboard pattern.
+Development simulators are useful. Silent production fallbacks are dangerous.
 
-## 10. Automate deterministic work
+I prefer:
 
-If the system already has enough trusted information to make a deterministic decision, repeatedly asking a human is usually waste.
+~~~text
+real provider unavailable
+        |
+        v
+explicit unavailable/configuration error
+~~~
 
-Humans should be involved when:
+over:
 
-- judgment is required
-- confidence is insufficient
-- policy requires approval
-- an exceptional state needs context
-- the consequences require deliberate confirmation
+~~~text
+real provider unavailable
+        |
+        v
+simulate success
+~~~
 
-Not simply because automation was never implemented.
+**Public example:** [StripePaymentProvider.kt](https://github.com/dthompsonfl/pos/blob/main/payment-stripe/src/main/java/com/enterprise/pos/payment/stripe/StripePaymentProvider.kt) keeps simulated behavior separate and returns a configuration failure when real mode does not have the required Terminal bridge.
 
-## 11. Use AI inside deterministic boundaries
+The same principle applies to:
 
-I am interested in agentic systems, but I do not treat an LLM as the authority for critical invariants.
+- credentials
+- signing keys
+- authorization context
+- production storage
+- required device transports
+- migration prerequisites
 
-A pattern I prefer:
+---
 
-```text
-model interprets / proposes
+## 7. Treat recovery as part of the feature
+
+A workflow is not complete when only its successful path is defined.
+
+For important operations I ask:
+
+1. What can fail?
+2. What state survives?
+3. Is retry safe?
+4. Could an external side effect already have happened?
+5. What can recover automatically?
+6. What does the operator see?
+7. When is human intervention required?
+8. How is the final outcome audited?
+
+This changes implementation choices early. It is why outboxes, reconciliation states, explicit transitions, and operator-facing exception queues matter.
+
+---
+
+## 8. Authorization belongs on the authoritative side
+
+The UI can guide users by hiding unavailable actions. It cannot be the security boundary.
+
+For protected mutations, the server should resolve and validate:
+
+- authenticated identity
+- role/permission
+- tenant or organization
+- location/store
+- register/device when relevant
+- target resource
+- current state
+- override/step-up requirements
+
+The client should not be able to expand authority by changing an ID in a request.
+
+Private restaurant source validates centralized authorization and RBAC work. Public [ECCB auth configuration](https://github.com/dthompsonfl/eccb.app/blob/main/src/lib/auth/config.ts) and [permission constants](https://github.com/dthompsonfl/eccb.app/blob/main/src/lib/auth/permission-constants.ts) provide separate inspectable examples of application authentication and typed permissions.
+
+---
+
+## 9. Scope is part of authorization
+
+“User is authenticated” is not enough.
+
+In multi-location or multi-role systems, correctness may depend on:
+
+~~~text
+identity
+  + permission
+  + tenant
+  + location
+  + register
+  + resource
+  + current workflow state
+~~~
+
+**Public example:** [PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) requires merchant/store/register context and validates payment metadata against that context.
+
+I still distinguish **context present in a request** from **context cryptographically or database-bound to the authenticated principal**. The latter is the stronger production guarantee.
+
+---
+
+## 10. Design each operational surface for its actual user
+
+POS, KDS, admin, and owner dashboards should not be the same interface with different navigation.
+
+### POS
+
+Optimize for speed, large touch targets, obvious price/payment state, and immediate recovery.
+
+### KDS
+
+Optimize for glanceability, elapsed time, station relevance, and very fast state transitions.
+
+### Admin
+
+Optimize for safe configuration, auditability, permissions, and explainable impact.
+
+### Owner / control plane
+
+Optimize for exceptions, business outcomes, reconciliation, and decisions.
+
+The domain model may be shared. The cognitive model should not be.
+
+---
+
+## 11. Keep automation deterministic at the point of authority
+
+Automation is valuable when its boundaries are explicit.
+
+A deterministic workflow can decide:
+
+- whether a transition is legal;
+- whether the actor is authorized;
+- whether a retry is safe;
+- which calculation is canonical;
+- whether a threshold was crossed.
+
+Those decisions should not depend on probabilistic text generation when the consequence is money, permissions, or irreversible state.
+
+---
+
+## 12. Put AI inside deterministic boundaries
+
+My preferred pattern for AI-enabled operational software is:
+
+~~~text
+AI interprets / proposes
+        |
+        v
+typed application boundary
         |
         v
 deterministic policy validates
         |
         v
-authorized tool executes
+authorized service executes
         |
         v
-system observes result
+system reads back actual result
         |
         v
-reconcile / escalate if necessary
-```
+audit / reconcile / escalate
+~~~
 
-AI can add flexibility while deterministic application logic retains control over:
+AI may help understand intent, classify information, draft content, summarize evidence, or propose actions.
 
-- money
-- permissions
-- business state
-- irreversible effects
-- compliance-sensitive actions
+It should not independently decide:
 
-## 12. Preserve data integrity over implementation convenience
+- who is authorized;
+- whether money moved;
+- whether an order is legally in a state;
+- whether a destructive transition is allowed;
+- whether external success occurred.
 
-Schema design, migrations, constraints, and transaction boundaries are product concerns.
+Private source validates bounded OpenAI-compatible provider integration, including input/output limits, timeout handling, transient-only retries, and structured-response support. I keep that implementation private and expose only the architectural capability here.
+
+---
+
+## 13. Preserve data integrity before optimizing convenience
+
+If a client-side shortcut can corrupt authoritative state, the shortcut is too expensive.
 
 I prefer:
 
-- explicit constraints
-- controlled migrations
-- deterministic seed behavior
-- safe defaults
-- integrity checks
-- clear ownership of authoritative fields
-- version-aware rollout
+- database constraints for durable invariants;
+- transactions around related writes;
+- stable identifiers;
+- explicit nullability;
+- version/revision checks for stale writes;
+- migrations that preserve deployment compatibility;
+- canonical units and money representation.
 
-## 13. Separate client convenience from system truth
+The exact mechanism depends on the datastore, but the principle is consistent: invalid state should be difficult to represent.
 
-A frontend can cache, optimize, and predict.
+---
 
-It should not become a competing source of truth for high-consequence business state.
+## 14. Separate client convenience from business authority
 
-When the client and authoritative service disagree, the system needs a defined reconciliation path.
+Caching, optimistic UI, offline drafts, and local projections are valuable.
 
-## 14. Production readiness should be explicit
+They should be treated as representations of authority, not replacements for it.
 
-A repository should make it clear what is:
+Examples:
 
-- implemented
-- tested
-- simulated
-- scaffolded
-- blocked
-- production-ready
-- dependent on hardware/provider validation
-- still requiring operational verification
+- cached menu: useful for display; server still owns canonical price;
+- local draft: useful offline; final submission still validates current rules;
+- optimistic status: useful for low-risk UI; payment success waits for authoritative evidence;
+- local role display: useful for navigation; server still enforces permission.
 
-I do not consider ambiguity about readiness useful optimism.
+This keeps fast UX compatible with strong correctness.
 
-The public [Enterprise POS Android](https://github.com/dthompsonfl/pos) repository intentionally documents these distinctions.
+---
 
-## 15. Test the failure modes that matter
+## 15. Persist before replaying offline work
 
-Coverage percentage alone is not a reliability strategy.
+For an offline-capable mutation, the client should not rely on volatile memory.
 
-High-value tests target things like:
+A safer pattern is:
 
-- duplicate requests
-- invalid transitions
-- permission boundaries
-- migration behavior
-- stale state
-- retry semantics
-- calculation correctness
-- data integrity
-- provider failures
-- security regressions
-- serialization/concurrency where relevant
+~~~text
+user command
+    |
+    v
+persist local command + operation identity
+    |
+    v
+update permitted local projection
+    |
+    v
+background sync
+    |
+    +--> success -> acknowledge
+    +--> retryable -> backoff
+    +--> conflict -> surface conflict
+    +--> unknown -> reconcile
+~~~
 
-## 16. Prefer boring correctness over cleverness
+**Public example:** [SyncOutboxEntity.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncOutboxEntity.kt) and [SyncEngine.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncEngine.kt) implement Room-backed queued work and WorkManager processing.
 
-Operational software benefits from code that another engineer can understand under pressure.
+---
 
-I value:
+## 16. Treat integration adapters as containment boundaries
 
-- explicit contracts
-- small responsibilities
-- clear naming
-- predictable control flow
-- strong typing
-- maintainable domain boundaries
+Provider-specific data models and SDK behavior should terminate at an adapter.
 
-over clever abstractions that make behavior harder to trace.
+I want domain code to depend on application-owned contracts such as:
 
-## 17. Keep integration boundaries explicit
+~~~text
+PaymentProvider
+IdentityProvider
+PrinterPort
+DeliveryAdapter
+CatalogSyncAdapter
+~~~
 
-External services have their own:
+not directly on provider SDK objects everywhere.
 
-- availability
-- consistency models
-- identifiers
-- rate limits
-- retry semantics
-- security requirements
+Benefits include:
 
-I prefer adapters/services that isolate those details rather than allowing provider-specific behavior to leak throughout the application.
+- easier provider replacement;
+- simpler testing;
+- centralized error translation;
+- secret isolation;
+- clearer retry policy;
+- less domain coupling.
 
-## 18. Observability should explain business impact
+**Public example:** [PaymentRouter.kt](https://github.com/dthompsonfl/pos/blob/main/payment-api/src/main/java/com/enterprise/pos/payment/router/PaymentRouter.kt) is a concrete payment-provider boundary.
 
-A technically precise error is useful, but operational systems also need to explain what it means.
+---
 
-Good observability should help answer:
+## 17. Make observability answer business questions
 
-- what business operation was affected?
-- what is its current state?
-- was money moved?
-- is a retry safe?
-- does a user need to act?
-- can the system recover automatically?
+CPU and memory graphs matter, but operators care about workflows.
 
-## 19. Security and reliability reinforce each other
+I want to be able to answer:
 
-A system that performs an operation for an unauthorized actor is not behaving reliably.
+- Which orders are stuck?
+- Which payments have uncertain outcomes?
+- Which provider is timing out?
+- Which devices have growing sync backlogs?
+- Which kitchen tickets are aging abnormally?
+- Which locations are using repeated manager overrides?
+- Which shifts do not reconcile?
 
-Security controls such as:
+Technical telemetry should make those questions easier to answer, not require reconstructing business state from raw logs.
 
+---
+
+## 18. Test failure modes, not only feature completion
+
+A green happy-path test does not prove an operational workflow.
+
+High-value scenarios include:
+
+- duplicate command
+- concurrent command
+- stale client revision
+- worker restart
+- network loss during dispatch
+- provider timeout after possible acceptance
+- webhook redelivery
+- unauthorized cross-location access
+- migration from an older client schema
+- hardware unavailable after a financial event
+- process death between external success and local persistence
+
+I want tests to assert what business state remains after the failure.
+
+---
+
+## 19. Make migrations part of the architecture
+
+Schema changes are not an afterthought.
+
+A migration plan should account for:
+
+- deployment ordering
+- application version skew
+- data backfill
+- nullability/default changes
+- index creation
+- destructive change avoidance
+- rollback or roll-forward
+- offline/mobile schema versions
+
+**Public example:** [PosMigrations.kt](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/db/PosMigrations.kt) contains explicit Room migrations rather than relying on destructive recreation.
+
+Private PostgreSQL systems add server-side migration validation and database-specific controls; those implementations remain private.
+
+---
+
+## 20. Prefer maintainable boundaries over clever abstractions
+
+I prefer the simplest architecture that keeps ownership clear.
+
+Good boundaries usually follow business or operational responsibility:
+
+- order
+- pricing
+- payment
+- identity/authorization
+- kitchen
+- fulfillment
+- device
+- reporting
+- integration adapter
+
+I avoid abstraction for its own sake. A new layer should earn its cost by reducing coupling, protecting an invariant, improving testability, or creating a real replacement boundary.
+
+---
+
+## 21. Be explicit about production readiness
+
+I separate:
+
+- source implemented;
+- repository verified;
+- simulated;
+- externally unverified;
+- deployment validated;
+- field/hardware certified.
+
+Code can be high quality without proving the environment around it.
+
+Examples of evidence source alone cannot establish:
+
+- a real payment reader survived disconnect/reconnect;
+- a printer model works under production network conditions;
+- a provider account settles correctly;
+- a database migration was rehearsed against representative data;
+- a system meets a throughput target;
+- operators can recover during a real shift.
+
+This is not conservative wording for its own sake. It prevents engineering decisions from being based on evidence that does not exist.
+
+---
+
+## 22. Own the end-to-end outcome
+
+I do not treat backend work as complete when the endpoint returns the right JSON.
+
+For an operational feature, ownership can include:
+
+- domain model
+- API/service contract
+- persistence
 - authorization
-- tenant isolation
-- secret handling
-- input validation
-- audit history
+- frontend/mobile state
+- integration behavior
+- observability
+- tests
+- migration
+- operator recovery
+- deployment/release gate
+- documentation
 
-are part of system correctness.
+The boundary of responsibility should follow the business outcome closely enough that failures do not fall between teams or layers.
 
-## 20. Own the outcome
+---
 
-I do not think a feature is finished merely because the code was merged.
+## Summary
 
-Ownership extends through:
+The recurring standard behind these principles is **operational correctness**.
 
-```text
-requirements
-  -> architecture
-  -> implementation
-  -> validation
-  -> deployment readiness
-  -> observation
-  -> recovery
-  -> refinement
-```
+I want systems to:
 
-The outcome in the real system is what matters.
+- make important state explicit;
+- keep business rules canonical;
+- reject unauthorized actions at the authoritative boundary;
+- survive duplicate delivery;
+- distinguish failure from uncertainty;
+- recover intentionally;
+- degrade safely;
+- make exceptions visible to operators;
+- constrain AI behind deterministic policy;
+- keep external integrations contained;
+- preserve data integrity;
+- state clearly where production evidence ends.
 
-## Related public evidence
-
-- [Enterprise POS Android](https://github.com/dthompsonfl/pos)
-- [Emerald Coast Community Band Platform](https://github.com/dthompsonfl/eccb.app)
-- [Repair Portal](https://github.com/dthompsonfl/repair_portal)
-- [Reliability Patterns](./RELIABILITY_PATTERNS.md)
+That is how I approach software expected to carry real business operations rather than only render a successful demo.
