@@ -2,6 +2,8 @@
 
 These are the principles I use when designing, reviewing, and hardening software.
 
+They are especially important in systems where software affects revenue, employees, customers, payments, devices, or operational continuity.
+
 ## 1. Solve the operational problem, not just the ticket
 
 A requested feature is often a symptom.
@@ -14,6 +16,7 @@ Before implementing, I try to understand:
 - what can go wrong
 - what the software can determine automatically
 - what truly requires human judgment
+- what happens if nothing is changed
 
 The goal is not to digitize unnecessary work. It is to remove it where possible.
 
@@ -26,21 +29,31 @@ For important workflows, state should be:
 - defined
 - validated
 - observable
+- auditable where appropriate
 - transitionable only through known rules
 
-This is especially important for payments, orders, approvals, fulfillment, shifts, and synchronization.
+This is especially important for:
+
+- payments
+- orders
+- approvals
+- fulfillment
+- shifts
+- synchronization
+- background jobs
 
 ## 3. Keep business rules canonical
 
-If the same rule is independently implemented in:
+If the same business rule is independently implemented in:
 
 - web
 - mobile
 - POS
+- KDS
 - admin
 - background jobs
 
-then it will eventually disagree with itself.
+then those implementations will eventually disagree.
 
 I prefer business rules to live behind shared domain services, contracts, or server-authoritative APIs where practical.
 
@@ -56,7 +69,9 @@ For side-effecting workflows, idempotency and reconciliation should be considere
 
 "Unknown" can be a real system state.
 
-If a provider may have completed an external operation but the application cannot prove the result, converting uncertainty into "failed" can create worse behavior than explicitly requiring reconciliation.
+If an external provider may have completed an operation but the application cannot prove the result, converting uncertainty into "failed" can create worse behavior than explicitly requiring reconciliation.
+
+False certainty is dangerous in payment and fulfillment systems.
 
 ## 6. Fail closed when false success is dangerous
 
@@ -67,6 +82,7 @@ I would rather make an unavailable production capability obvious than silently s
 - fake hardware success
 - destructive migration fallback
 - insecure defaults
+- unverified external state
 
 Development conveniences should not accidentally become production behavior.
 
@@ -80,16 +96,25 @@ For important workflows, implementation planning should include:
 - partial failure
 - interrupted workflows
 - stale clients
+- provider disagreement
 - reconciliation
 - operator recovery
 
 Recovery is part of the feature.
 
-## 8. Authorization belongs on the server
+## 8. Authorization belongs at the authoritative boundary
 
 Hiding a button is presentation logic, not security.
 
-Protected operations should validate identity, tenant/location context, role/permission, and relevant business constraints at the authoritative boundary.
+Protected operations should validate:
+
+- identity
+- tenant/location/register context
+- role and permission
+- current resource state
+- business constraints
+
+at the server or authoritative service boundary.
 
 ## 9. Optimize interfaces for the environment
 
@@ -101,9 +126,10 @@ The correct interface depends on:
 - device
 - user role
 - error cost
-- frequency
+- frequency of use
 - information density
 - training level
+- environment
 
 Operational software should not force every user into the same generic dashboard pattern.
 
@@ -117,8 +143,9 @@ Humans should be involved when:
 - confidence is insufficient
 - policy requires approval
 - an exceptional state needs context
+- the consequences require deliberate confirmation
 
-Not because the implementation never automated an obvious rule.
+Not simply because automation was never implemented.
 
 ## 11. Use AI inside deterministic boundaries
 
@@ -142,7 +169,13 @@ system observes result
 reconcile / escalate if necessary
 ```
 
-AI adds flexibility; application logic retains control over money, permissions, state transitions, and irreversible effects.
+AI can add flexibility while deterministic application logic retains control over:
+
+- money
+- permissions
+- business state
+- irreversible effects
+- compliance-sensitive actions
 
 ## 12. Preserve data integrity over implementation convenience
 
@@ -151,13 +184,22 @@ Schema design, migrations, constraints, and transaction boundaries are product c
 I prefer:
 
 - explicit constraints
-- reversible/controlled migrations
+- controlled migrations
 - deterministic seed behavior
 - safe defaults
 - integrity checks
 - clear ownership of authoritative fields
+- version-aware rollout
 
-## 13. Production readiness should be explicit
+## 13. Separate client convenience from system truth
+
+A frontend can cache, optimize, and predict.
+
+It should not become a competing source of truth for high-consequence business state.
+
+When the client and authoritative service disagree, the system needs a defined reconciliation path.
+
+## 14. Production readiness should be explicit
 
 A repository should make it clear what is:
 
@@ -167,11 +209,14 @@ A repository should make it clear what is:
 - scaffolded
 - blocked
 - production-ready
-- still requiring external validation
+- dependent on hardware/provider validation
+- still requiring operational verification
 
-I do not consider ambiguity about readiness a useful form of optimism.
+I do not consider ambiguity about readiness useful optimism.
 
-## 14. Test the failure modes that matter
+The public [Enterprise POS Android](https://github.com/dthompsonfl/pos) repository intentionally documents these distinctions.
+
+## 15. Test the failure modes that matter
 
 Coverage percentage alone is not a reliability strategy.
 
@@ -187,8 +232,9 @@ High-value tests target things like:
 - data integrity
 - provider failures
 - security regressions
+- serialization/concurrency where relevant
 
-## 15. Prefer boring correctness over cleverness
+## 16. Prefer boring correctness over cleverness
 
 Operational software benefits from code that another engineer can understand under pressure.
 
@@ -203,7 +249,47 @@ I value:
 
 over clever abstractions that make behavior harder to trace.
 
-## 16. Own the outcome
+## 17. Keep integration boundaries explicit
+
+External services have their own:
+
+- availability
+- consistency models
+- identifiers
+- rate limits
+- retry semantics
+- security requirements
+
+I prefer adapters/services that isolate those details rather than allowing provider-specific behavior to leak throughout the application.
+
+## 18. Observability should explain business impact
+
+A technically precise error is useful, but operational systems also need to explain what it means.
+
+Good observability should help answer:
+
+- what business operation was affected?
+- what is its current state?
+- was money moved?
+- is a retry safe?
+- does a user need to act?
+- can the system recover automatically?
+
+## 19. Security and reliability reinforce each other
+
+A system that performs an operation for an unauthorized actor is not behaving reliably.
+
+Security controls such as:
+
+- authorization
+- tenant isolation
+- secret handling
+- input validation
+- audit history
+
+are part of system correctness.
+
+## 20. Own the outcome
 
 I do not think a feature is finished merely because the code was merged.
 
@@ -221,3 +307,10 @@ requirements
 ```
 
 The outcome in the real system is what matters.
+
+## Related public evidence
+
+- [Enterprise POS Android](https://github.com/dthompsonfl/pos)
+- [Emerald Coast Community Band Platform](https://github.com/dthompsonfl/eccb.app)
+- [Repair Portal](https://github.com/dthompsonfl/repair_portal)
+- [Reliability Patterns](./RELIABILITY_PATTERNS.md)
