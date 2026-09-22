@@ -75,9 +75,11 @@ Production source for active commercial systems remains private. I document the 
 
 ## Read More
 
+- [Documentation Index](docs/README.md)
 - [Career & Engineering Timeline](docs/CAREER_TIMELINE.md)
 - [Selected Projects](docs/SELECTED_PROJECTS.md)
 - [Restaurant Operations Case Study](docs/RESTAURANT_OPERATIONS_CASE_STUDY.md)
+- [Reliability Patterns](docs/RELIABILITY_PATTERNS.md)
 - [Engineering Principles](docs/ENGINEERING_PRINCIPLES.md)
 - [Technical Stack](docs/TECHNICAL_STACK.md)
 
