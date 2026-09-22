@@ -1,39 +1,61 @@
 # Selected Projects
 
-This document summarizes representative engineering work. Public repositories are linked directly. Active commercial and operational systems remain private where source code or data should not be exposed.
+This document summarizes representative engineering work.
+
+I distinguish between **public implementation evidence**, which can be inspected directly, and **private active systems**, where I publish sanitized architecture rather than proprietary source.
 
 ## Enterprise POS Android
 
-**Repository:** [dthompsonfl/pos](https://github.com/dthompsonfl/pos)
+**Repository:** [dthompsonfl/pos](https://github.com/dthompsonfl/pos)  
+**Visibility:** public  
+**Status:** active prototype / production-hardening work; not represented as fully production-ready
 
-A multi-module Android/Kotlin point-of-sale prototype for restaurant and retail workflows.
+A multi-module Android/Kotlin point-of-sale system for restaurant and retail workflows.
 
 ### Engineering scope
 
-- Kotlin and Jetpack Compose
+- Kotlin
+- Jetpack Compose
 - Room persistence
+- WorkManager/background synchronization
 - payment-provider abstractions
 - hardware abstractions
 - Ktor backend module
-- CI wiring
 - register-scoped order flows
-- shift and reporting workflows
-- sync and migration scaffolding
-- release-signing safeguards
-- fail-closed production behavior
+- shifts and reporting
+- migrations
+- sync/recovery design
+- release safeguards
+- CI wiring
 
-### What matters technically
+### Public reliability evidence
 
-The repository is intentionally explicit about what is and is not production-ready. Simulated payment paths, debug signing, unimplemented hardware transports, and unsafe migration behavior are prevented from silently becoming release behavior.
+The repository contains direct examples of:
 
-This project reflects an engineering principle I care about strongly: **incomplete production integrations should fail visibly and safely rather than pretend to work.**
+- [offline local writes plus a sync outbox](https://github.com/dthompsonfl/pos/blob/main/SYNC.md)
+- [idempotency requirements for payment retries](https://github.com/dthompsonfl/pos/blob/main/PAYMENTS.md)
+- merchant/store/register-scoped payment context and idempotency documented in [FINAL_VERIFICATION.md](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md)
+- Room database persistence and migration handling
+- release behavior that fails closed when a real payment or hardware integration is unavailable
+
+### Why it matters
+
+The project demonstrates the distinction between:
+
+- code that compiles
+- development simulations
+- integration scaffolding
+- functionality that has actually been hardened for release
+
+I consider that distinction essential in payment and operational software.
 
 ---
 
 ## Restaurant Operations Platform
 
 **Source:** private active system  
-**Public documentation:** [Restaurant Operations Case Study](./RESTAURANT_OPERATIONS_CASE_STUDY.md)
+**Public documentation:** [Restaurant Operations Case Study](./RESTAURANT_OPERATIONS_CASE_STUDY.md)  
+**Status:** active engineering; private source intentionally not published
 
 An integrated restaurant operating platform spanning:
 
@@ -44,23 +66,51 @@ An integrated restaurant operating platform spanning:
 - payments
 - employee sessions and permissions
 - shifts
-- devices
+- operational devices
 - administrative controls
-- operational recovery
+- recovery workflows
 
 ### My scope
 
-I work across architecture, domain modeling, workflow design, backend services, integrations, mobile concerns, payment flows, operational UI, testing, and production-hardening decisions.
+I work across:
 
-A recurring design goal is to keep business rules canonical across POS, administration, kitchen, and mobile surfaces instead of allowing each client to invent its own interpretation of state.
+- requirements discovery
+- architecture
+- domain modeling
+- backend services
+- application workflows
+- integrations
+- mobile/device concerns
+- payment boundaries
+- operational UI
+- role and permission design
+- testing
+- production-hardening decisions
+
+### Engineering emphasis
+
+A recurring design goal is to keep business rules canonical across POS, administration, kitchen, and mobile surfaces.
+
+Important concerns include:
+
+- explicit order/payment state
+- safe retries
+- recovery from partial failure
+- permission-sensitive overrides
+- minimizing operator cognitive load
+- reducing repeated manual intervention
+
+Because the production source is private, the public case study clearly separates implemented context from generalized patterns.
 
 ---
 
 ## Emerald Coast Community Band Platform
 
-**Repository:** [dthompsonfl/eccb.app](https://github.com/dthompsonfl/eccb.app)
+**Repository:** [dthompsonfl/eccb.app](https://github.com/dthompsonfl/eccb.app)  
+**Visibility:** public  
+**Status:** active full-stack application
 
-A full-stack platform with public, authenticated member, and administrative surfaces.
+A platform with public, authenticated member, and administrative surfaces.
 
 ### Stack
 
@@ -86,15 +136,29 @@ A full-stack platform with public, authenticated member, and administrative surf
 - background jobs
 - optional OCR-assisted ingestion
 
-This project demonstrates my preference for separating public, authenticated, and administrative concerns while keeping shared business logic and permissions explicit.
+### Public implementation evidence
+
+The repository includes:
+
+- Better Auth configuration and route handling
+- Redis/BullMQ background job infrastructure
+- Prisma-backed application data
+- distinct public/member/admin application surfaces
+- server-side application services and workers
+
+### Why it matters
+
+This project demonstrates full-stack architecture with multiple trust levels and user roles rather than a single public frontend.
 
 ---
 
 ## Repair Portal
 
-**Repository:** [dthompsonfl/repair_portal](https://github.com/dthompsonfl/repair_portal)
+**Repository:** [dthompsonfl/repair_portal](https://github.com/dthompsonfl/repair_portal)  
+**Visibility:** public  
+**Status:** operational-domain application
 
-A Frappe/ERPNext domain application for instrument-repair operations.
+A Frappe/ERPNext application for instrument-repair operations.
 
 ### Workflow
 
@@ -120,17 +184,25 @@ intake
 - payment/shipping integration points
 - backup and go-live planning
 
-The project is useful evidence of domain modeling: it contains many related business entities and stateful workflows rather than functioning as a simple CRUD demonstration.
+### Public implementation evidence
+
+The repository exposes a large operational domain model and includes implemented data-retention behavior such as the configurable `data_retention_months` path in its compliance utilities.
+
+### Why it matters
+
+The project demonstrates domain modeling across many related business entities and stateful workflows rather than a small CRUD application.
 
 ---
 
 ## Shopify & Commerce Engineering
 
-**Representative repository:** [dthompsonfl/shopifysync1](https://github.com/dthompsonfl/shopifysync1)
+**Representative repository:** [dthompsonfl/shopifysync1](https://github.com/dthompsonfl/shopifysync1)  
+**Timeline:** software development began in 2021  
+**Status:** early public artifact; not representative of my current engineering depth
 
-Shopify was the starting point of my software-development path in 2021.
+Shopify was the starting point of my software-development path.
 
-My commerce work has included:
+My commerce work included:
 
 - storefront customization
 - themes
@@ -142,11 +214,13 @@ My commerce work has included:
 
 That work gradually expanded into standalone applications, backend services, APIs, databases, payments, authentication, and SaaS architecture.
 
+The public repository is useful primarily as historical evidence of that progression; its current documentation is much thinner than my recent projects.
+
 ---
 
-## Large Private SaaS Platforms
+## Large private SaaS and operational platforms
 
-Several active repositories remain private because they represent production-oriented products or internal operational systems.
+Several active repositories remain private because they represent production-oriented products, internal operational systems, or business-sensitive implementations.
 
 Across these systems I have worked with combinations of:
 
@@ -166,4 +240,14 @@ Across these systems I have worked with combinations of:
 - administrative control planes
 - tenant-aware application boundaries
 
-I prefer to keep private production code private and publish sanitized architecture or patterns when that provides useful technical evidence without exposing business-sensitive implementation details.
+I do not make a repository public simply to create recruiting evidence.
+
+When source should remain private, I prefer to publish:
+
+- sanitized architecture
+- failure-mode analysis
+- engineering principles
+- non-proprietary patterns
+- public implementation examples from adjacent systems
+
+That keeps the portfolio technically useful without weakening security or confidentiality.
