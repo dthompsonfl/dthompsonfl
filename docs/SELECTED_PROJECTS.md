@@ -2,6 +2,8 @@
 
 This is the **technical evidence layer** for my wider operations and business-systems background. Projects are presented by the business workflow they address and then by what their public code actually demonstrates. A repository is not proof of personal authorship of every line, a production deployment or a verified business result.
 
+For a wider but more selective catalog including experiments and older source, see the [Public Work Index](./PUBLIC_WORK_INDEX.md). For the commercial and human side, see the [Professional Capability Map](./PROFESSIONAL_CAPABILITIES.md).
+
 ## Business-first project guide
 
 | Project | Operational purpose | Implementation status |
@@ -320,9 +322,9 @@ They show that the public repositories are not the ceiling of my current work. T
 
 ## What I want a reviewer to take away
 
-The portfolio is not intended to imply that every repository is complete or deployed at massive scale.
+The portfolio does not imply that every repository is complete or deployed at significant scale.
 
-It is intended to show a consistent engineering trajectory:
+**The professional through-line is broader than engineering:** customer-facing operations and people coordination, supplier purchasing and pricing, investigation and commercial judgment, followed by business-systems implementation. The engineering trajectory sits alongside that operating career:
 
 ~~~text
 2021 commerce development

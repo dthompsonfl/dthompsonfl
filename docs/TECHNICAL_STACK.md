@@ -1,6 +1,6 @@
 # Technical Stack
 
-This is a depth-based inventory, not a list of every technology I have encountered.
+This is a depth-based inventory for technical reviewers, **not** my entire professional identity. My operations, purchasing, pricing, people and commercial work is documented in the [Professional Capability Map](./PROFESSIONAL_CAPABILITIES.md). The broader, status-aware [Public Work Index](./PUBLIC_WORK_INDEX.md) includes experiments without equating them to production experience.
 
 I use three levels:
 
@@ -330,7 +330,7 @@ Work includes:
 - provider abstraction
 - idempotency
 - payment-state/reconciliation design
-- private production-system integration work
+- private integration and system-design work, without independently established field or settlement certification
 
 **Public evidence:** [POS PaymentRoutes.kt](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt) and [StripePaymentProvider.kt](https://github.com/dthompsonfl/pos/blob/main/payment-stripe/src/main/java/com/enterprise/pos/payment/stripe/StripePaymentProvider.kt).
 

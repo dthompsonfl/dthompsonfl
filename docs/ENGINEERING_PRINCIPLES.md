@@ -1,5 +1,7 @@
 # Engineering Principles
 
+This document is the technical layer of a broader career in operations, purchasing, pricing and business systems. See the [Professional Capability Map](./PROFESSIONAL_CAPABILITIES.md) for work outside software and the [Public Work Index](./PUBLIC_WORK_INDEX.md) for the inspectable code supporting selected examples.
+
 These principles describe how I turn operational requirements into implementation decisions. They are not slogans or claims that every repository applies every principle identically. Where public code demonstrates a pattern, I link it; where the principle is broader than the public evidence, I label it as an engineering standard I apply.
 
 ## 1. Solve the operating problem, not the screen

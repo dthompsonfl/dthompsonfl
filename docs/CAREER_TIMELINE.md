@@ -6,6 +6,20 @@ My operating experience is an important qualification in its own right, **not me
 
 For concrete examples, see [purchasing and supplier decisions](./case-studies/purchasing-pricing-and-supplier-decisions.md), [operational reporting and improvement](./case-studies/operational-reporting-and-process-change.md), and [business-systems implementation](./case-studies/business-systems-and-implementation.md).
 
+## Firsthand employment and business chronology
+
+| Work | Responsibilities and progression | Dates |
+|---|---|---|
+| The UPS Store | Assistant Manager: shift coordination, customer service, shipping records and escalations | August 2011–December 2014 |
+| Panama City Bingo | Floor Worker, then Manager-in-Charge beginning March 2016 | October 2014–October 2018 |
+| Mary Esther Bingo | Floor Worker, then Manager-in-Charge beginning July 2020 | October 2018–present |
+| Specialty repair business | Instrument service, supplier purchasing, pricing, customer estimates and operating records | Business operations March 2022–August 2025 |
+| Independent software work | Project-based commerce, integrations, operational apps and AI-assisted development | 2021–present |
+
+The roles and dates above are **firsthand accounts**, not employment records independently certified by the named organizations. The periods overlap; software is not presented as continuous salaried developer employment. The repair-business trading period is distinct from the earlier self-funded technical training that began in 2021.
+
+[People and operations](./case-studies/frontline-operations-and-team-coordination.md) · [Purchasing and pricing](./case-studies/purchasing-pricing-and-supplier-decisions.md) · [Commercial decisions](./case-studies/commercial-document-review-and-decision-support.md)
+
 ## Progression at a glance
 
 ~~~text
@@ -129,7 +143,7 @@ As the systems became more consequential, my focus moved increasingly toward bac
 - CI and release gates
 - admin/control-plane architecture
 
-Current private repositories provide the strongest source-level evidence for my PostgreSQL work. I have inspected PostgreSQL-backed Prisma schemas, PostgreSQL integration tests, migration controls, and application-level data authority in those systems. I keep those implementations private and summarize them here rather than exposing proprietary source.
+Current private repositories provide the strongest source-level evidence for my PostgreSQL work. Prior private source review documented PostgreSQL-backed Prisma schemas, PostgreSQL integration tests, migration controls and application-level data authority in those systems. I keep those implementations private and summarize them here rather than exposing proprietary source.
 
 ## Expansion — restaurant technology and operational reliability
 

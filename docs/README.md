@@ -2,13 +2,17 @@
 
 This portfolio shows how I connect hands-on business operations with purchasing, pricing, process improvement and practical systems implementation. Business examples come first for nontechnical reviewers; the existing technical documentation remains available for engineering review.
 
+**Two quick entry points:** [What I can do, with evidence](./PROFESSIONAL_CAPABILITIES.md) · [Public source and experiments index](./PUBLIC_WORK_INDEX.md).
+
 ## Start here: business and operations
 
-1. [Purchasing, Pricing & Supplier Decisions](./case-studies/purchasing-pricing-and-supplier-decisions.md) — real purchasing decisions, comparison tools and a supplier-continuity example.
-2. [Operational Reporting & Process Improvement](./case-studies/operational-reporting-and-process-change.md) — a peer-adopted service route and a separate reporting investigation.
-3. [Business Systems & Implementation](./case-studies/business-systems-and-implementation.md) — business requirements translated into CRM, commerce/ERP and operational workflows.
-4. [Career Timeline](./CAREER_TIMELINE.md) — how earlier and continuing business operations relate to independent technical work.
-5. [Selected Projects](./SELECTED_PROJECTS.md) — inspectable code, current implementation status and limitations.
+1. [People & Operations](./case-studies/frontline-operations-and-team-coordination.md) — role progression, staff coordination and direct service experience.
+2. [Commercial Documents & Decisions](./case-studies/commercial-document-review-and-decision-support.md) — agreement term comparisons and a leadership no-go decision.
+3. [Purchasing, Pricing & Supplier Decisions](./case-studies/purchasing-pricing-and-supplier-decisions.md) — real purchasing decisions, comparison tools and a supplier-continuity example.
+4. [Operational Reporting & Process Improvement](./case-studies/operational-reporting-and-process-change.md) — a peer-adopted service route and a separate reporting investigation.
+5. [Business Systems & Implementation](./case-studies/business-systems-and-implementation.md) — business requirements translated into CRM, commerce/ERP and operational workflows.
+6. [Career Timeline](./CAREER_TIMELINE.md) — how earlier and continuing business operations relate to independent technical work.
+7. [Selected Projects](./SELECTED_PROJECTS.md) — inspectable code, current implementation status and limitations.
 
 ## Technical review path
 
@@ -30,7 +34,7 @@ Every material claim in this portfolio is intended to fit one of four categories
 
 The implementation can be inspected directly in a public repository. When a specific claim matters, I prefer linking to the implementation file rather than relying only on project-level prose.
 
-Primary public repositories:
+Primary public repositories (the broader, status-aware catalog is [Public Work Index](./PUBLIC_WORK_INDEX.md)):
 
 - [dthompsonfl/pos](https://github.com/dthompsonfl/pos)
 - [dthompsonfl/eccb.app](https://github.com/dthompsonfl/eccb.app)
@@ -122,6 +126,8 @@ Direct references:
 
 | Document | Purpose |
 |---|---|
+| [Professional Capabilities](./PROFESSIONAL_CAPABILITIES.md) | Operations, commercial and technical capability-to-evidence map |
+| [Public Work Index](./PUBLIC_WORK_INDEX.md) | Additional source-backed projects, experiments, attribution and maturity limits |
 | [Career Timeline](./CAREER_TIMELINE.md) | Separates pre-software operating experience from the software-development path beginning in 2021 |
 | [Selected Projects](./SELECTED_PROJECTS.md) | Project-by-project status, purpose, stack, responsibilities, source evidence, limitations, and engineering relevance |
 | [Restaurant Operations Case Study](./RESTAURANT_OPERATIONS_CASE_STUDY.md) | Deep architecture discussion for ordering, POS, KDS, payments, menus, devices, shifts, fulfillment, reliability, security, and operational UX |

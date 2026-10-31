@@ -1,4 +1,6 @@
-# Restaurant Operations Case Study
+# Restaurant Software Design Case Study
+
+**Scope:** A technical design and source-evidence study, not a claim that every described restaurant workflow was deployed, field-tested or delivered as a measured business improvement. For firsthand venue-operating experience, see [People & Operations](./case-studies/frontline-operations-and-team-coordination.md) and [Operational Reporting & Process Improvement](./case-studies/operational-reporting-and-process-change.md).
 
 ## Purpose
 
