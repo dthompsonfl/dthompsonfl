@@ -1,10 +1,18 @@
 # Portfolio Documentation
 
-This directory is the technical layer behind the profile README. It is written for recruiters, hiring managers, and engineers who want to verify not only what I have worked on, but how I reason about operational software.
+This portfolio shows how I connect hands-on business operations with purchasing, pricing, process improvement and practical systems implementation. Business examples come first for nontechnical reviewers; the existing technical documentation remains available for engineering review.
 
-## Recommended review path
+## Start here: business and operations
 
-For a fast technical review:
+1. [Purchasing, Pricing & Supplier Decisions](./case-studies/purchasing-pricing-and-supplier-decisions.md) — real purchasing decisions, comparison tools and a supplier-continuity example.
+2. [Operational Reporting & Process Improvement](./case-studies/operational-reporting-and-process-change.md) — a peer-adopted service route and a separate reporting investigation.
+3. [Business Systems & Implementation](./case-studies/business-systems-and-implementation.md) — business requirements translated into CRM, commerce/ERP and operational workflows.
+4. [Career Timeline](./CAREER_TIMELINE.md) — how earlier and continuing business operations relate to independent technical work.
+5. [Selected Projects](./SELECTED_PROJECTS.md) — inspectable code, current implementation status and limitations.
+
+## Technical review path
+
+For a technical reviewer, start with original public source and the corresponding verification limits:
 
 1. Start with [Selected Projects](./SELECTED_PROJECTS.md) for source-backed project scope and implementation status.
 2. Read [Restaurant Operations Case Study](./RESTAURANT_OPERATIONS_CASE_STUDY.md) for the deepest domain-specific backend discussion.
