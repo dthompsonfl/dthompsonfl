@@ -1,41 +1,36 @@
-# Career & Engineering Timeline
+# Career Timeline: Operations, Business Systems & Technology
 
-My software-development timeline begins in **2021**.
+My professional background combines **more than a decade of hands-on business operations** with purchasing, pricing, service coordination, process improvement and independent technology work. I began developing software on a project basis in **2021**.
 
-My career before and alongside software includes **more than a decade of hands-on business operations**. I do **not** count those operating years as software-engineering tenure. I do treat them as domain experience because they materially affect how I design employee workflows, cash and reconciliation controls, customer-facing processes, exception handling, and software for nontechnical operators.
+My operating experience is an important qualification in its own right, **not merely a prelude to engineering**. The timelines overlap and describe different kinds of experience. I do **not** count operating years as salaried engineering tenure.
+
+For concrete examples, see [purchasing and supplier decisions](./case-studies/purchasing-pricing-and-supplier-decisions.md), [operational reporting and improvement](./case-studies/operational-reporting-and-process-change.md), and [business-systems implementation](./case-studies/business-systems-and-implementation.md).
 
 ## Progression at a glance
 
 ~~~text
-business and operations experience
+2011 onward: customer-facing and shift operations
         |
-        v
-2021: Shopify development
+        +-- management, staff coordination and service improvement
         |
-        v
-commerce integrations and ERP workflows
+2021 onward: independent, project-based software development
         |
-        v
-business applications and operational software
+2022–2025: specialty repair business operations
+        |       +-- purchasing, supplier decisions, pricing and records
         |
-        v
-full-stack web systems
-        |
-        v
-backend and platform engineering
-        |
-        v
-restaurant systems, SaaS, mobile, reliability, AI/automation
+        +-- commerce, ERP, CRM and operational applications
+                |
+                +-- backend, web, mobile and AI-assisted systems work
 ~~~
 
-## Before 2021 — operating context, not engineering tenure
+## Operating career — direct work with people, purchasing and processes
 
-Before software became a primary technical discipline for me, I had already spent years working directly with customer-facing business operations.
+My customer-facing operating career began long before my software work and has continued alongside it. My experience spans retail/shipping service, frontline venue work, Manager-in-Charge responsibilities and an owner-operated specialty repair business. In those settings I worked directly with the people, information and commercial decisions that keep an operation functioning.
 
 That operating experience includes:
 
-- employee workflows
-- staffing and scheduling
+- shift and employee coordination
+- supplier purchasing, price comparison and order records
 - cash controls
 - financial reconciliation
 - customer operations
@@ -215,10 +210,14 @@ Money movement, permissions, irreversible state changes, and core business invar
 
 ## Current positioning
 
-Today I am best represented as a **Backend & Platform Engineer** with end-to-end product capability and unusually direct operational-domain context.
+Today I am best represented as an **Operations & Business Systems Professional** with hands-on purchasing, pricing, people and process experience, supported by independent technical implementation capability. My engineering work is a significant asset, but it is not the only career story.
 
-The strongest themes across my work are:
+The strongest themes across my work include:
 
+- purchasing, supplier comparisons and pricing decisions
+- shift management, service coordination and process documentation
+- operational reporting, exception review and commercial judgment
+- business requirements, CRM work and implementation decisions
 - TypeScript / Node.js backend systems
 - Next.js / React product systems
 - PostgreSQL / Prisma data design
@@ -238,6 +237,6 @@ The strongest themes across my work are:
 For clarity:
 
 - **Software development:** 2021–present
-- **Earlier/parallel business operations:** more than a decade of domain experience
+- **Earlier/parallel business operations:** more than a decade of practical experience with people, processes, purchasing and customer service
 - **Claim I do not make:** that the operating years are software-engineering years
-- **Claim I do make:** that operating real businesses has materially shaped the systems, failure modes, and user workflows I know how to design for
+- **Claim I do make:** that hands-on operations, commercial decisions and practical technical work together inform how I investigate problems and implement solutions
