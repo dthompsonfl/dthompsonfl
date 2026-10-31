@@ -1,5 +1,20 @@
 # Selected Projects
 
+This is the **technical evidence layer** for my wider operations and business-systems background. Projects are presented by the business workflow they address and then by what their public code actually demonstrates. A repository is not proof of personal authorship of every line, a production deployment or a verified business result.
+
+## Business-first project guide
+
+| Project | Operational purpose | Implementation status |
+|---|---|---|
+| [Repair Portal](https://github.com/dthompsonfl/repair_portal) | Organize specialty repair intake, service steps, permissions and records | Public workflow-oriented Frappe/ERPNext code; deployment not independently certified |
+| [ECCB](https://github.com/dthompsonfl/eccb.app) | Support member and administrative workflows, background tasks and role-aware access | Active public application code; deployment and individual feature authorship not independently established |
+| [Restaurant POS](https://github.com/dthompsonfl/pos) | Model ordering, payment boundaries, kitchen coordination and shift workflows | **Prototype / production hardening**, not production-certified |
+| [Shopify/ERP historical artifact](https://github.com/dthompsonfl/shopifysync1) | Illustrate the start of commerce integration work | Minimal historical repository; not current implementation-depth proof |
+
+**Related operational experience:** [Purchasing and pricing](./case-studies/purchasing-pricing-and-supplier-decisions.md) · [Operational process improvement](./case-studies/operational-reporting-and-process-change.md) · [Business systems implementation](./case-studies/business-systems-and-implementation.md).
+
+## Source-backed technical project details
+
 This document is intentionally status-aware. A repository can demonstrate substantial engineering without proving that every external provider, physical device, deployment environment, or scale characteristic has been validated in production.
 
 ## Status language used here
