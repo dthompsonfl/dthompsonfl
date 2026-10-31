@@ -1,69 +1,69 @@
 # Dylan Thompson
 
-**Backend & Platform Engineer**
+**Operations & Business Systems Professional**
 
-I build backend and product systems for operational businesses: APIs, data models, authorization, payments, workflow automation, admin/control planes, mobile clients, and failure-recovery paths. A major area of my work is restaurant technology, where ordering, POS, kitchen, menu, payment, device, employee, and reconciliation workflows all have to stay correct under real operating pressure.
+**Purchasing · Pricing · People · Process Improvement · Technology**
 
-My software-development timeline begins in **2021**, when I started with Shopify themes, apps, extensions, storefront customization, commerce integrations, catalog workflows, and ERP synchronization. My career before and alongside software includes **more than a decade of hands-on business operations**. I do not count that operating background as software-engineering tenure; I use it as domain knowledge when designing systems for employees and customers who need the software to work during the busiest and least forgiving parts of the day.
+I bring more than a decade of hands-on customer-facing business operations experience, including staff and service coordination, purchasing and supplier decisions, pricing analysis, cash reconciliation and practical workflow improvement. Alongside that work, I have developed business software and integrations on a project basis since 2021.
 
-## Current engineering focus
+I like finding out how work actually happens: who makes each decision, where information gets lost, why a process creates friction and what can be improved without making the solution harder than the problem. I compare practical options, work through the details and help put changes into use. Sometimes the answer is better purchasing information or a clearer procedure. Sometimes it is a spreadsheet, an integration or an application.
 
-- **Backend & platform:** TypeScript, Node.js, REST/API architecture, PostgreSQL, Prisma, authentication, authorization, RBAC, jobs, integrations, migrations, observability, and release controls
-- **Product engineering:** Next.js, React, admin/control-plane systems, role-specific operational UX, and end-to-end workflow ownership
-- **Restaurant technology:** ordering, POS/register state, menus, modifiers and pricing, payments, KDS/kitchen workflows, shifts, devices, offline/recovery behavior, and reconciliation
-- **Mobile:** Kotlin, Jetpack Compose, Room, WorkManager; current private React Native/Expo work is secondary to my Android/Kotlin depth
-- **Automation & AI:** deterministic workflow automation, bounded LLM integrations, and agent-oriented systems where model output remains behind application-owned policy and authorization
+**My value is the combination:** I understand day-to-day operations and commercial tradeoffs, and I can also work with the technology that supports them.
 
-## Public proof
+## What I work on
 
-| Project | What it demonstrates | Current evidence status |
+| Business area | Experience I bring |
+|---|---|
+| **Purchasing, suppliers and pricing** | Supplier research, sourcing alternatives, purchase decisions, supplier-price and discount analysis, Excel pricing tools, and invoice visibility in a small business |
+| **People and service operations** | Shift coordination, customer escalations, colleague coaching, service workflows and operating procedures |
+| **Problem investigation and process improvement** | Tracing discrepancies, comparing options, documenting processes and distinguishing a proposed fix from one actually adopted |
+| **Business systems and implementation** | Requirements, custom CRM work, commerce and ERP integration, role-aware workflows and operational applications |
+| **Technology as a practical tool** | Independent development with Python, TypeScript, web applications, APIs, automation and AI-assisted engineering |
+
+## Selected examples from my work
+
+These are short, business-first accounts. Some activities are supported by privately reviewed original records; other specific actions are my firsthand accounts. I do not publish confidential records or claim independently audited outcomes.
+
+- **[Purchasing, pricing and supplier decisions](docs/case-studies/purchasing-pricing-and-supplier-decisions.md)** — Excel-based purchasing information, supplier cost comparisons and a real alternative-source decision for a repair business.
+- **[Operational reporting and process improvement](docs/case-studies/operational-reporting-and-process-change.md)** — a service workflow colleagues adopted and a separate investigation that led to a proposed reporting improvement.
+- **[Business systems and implementation](docs/case-studies/business-systems-and-implementation.md)** — connecting operational requirements with ERP integration, CRM experimentation and public workflow-oriented software.
+
+## Public software projects
+
+My GitHub repositories are supporting evidence for the systems side of my experience, **not a substitute for the years I have spent working directly in business operations**.
+
+| Public project | Business problem / purpose | Evidence boundary |
 |---|---|---|
-| [dthompsonfl/pos](https://github.com/dthompsonfl/pos) | Kotlin/Compose POS, Room persistence, migrations, WorkManager sync, payment boundaries, KDS, restaurant floor flows, shifts, and hardware abstractions | **Active prototype / production hardening.** Strong source-level evidence; not represented as production-certified |
-| [dthompsonfl/eccb.app](https://github.com/dthompsonfl/eccb.app) | Next.js/React/TypeScript application, Prisma on MySQL/MariaDB, Better Auth, RBAC surfaces, Redis/BullMQ workers, public/member/admin application boundaries | **Active application codebase.** Source evidence is public; deployment claims are intentionally separate |
-| [dthompsonfl/repair_portal](https://github.com/dthompsonfl/repair_portal) | Python, Frappe/ERPNext, operational domain modeling, role permissions, scheduled workflow logic, configurable data retention | **Public operational application codebase** |
-| [dthompsonfl/shopifysync1](https://github.com/dthompsonfl/shopifysync1) | Historical Shopify-to-ERP direction from the start of my development path | **Early artifact only.** It corroborates the origin of the work; it is not evidence of my current engineering depth |
+| **[Repair Portal](https://github.com/dthompsonfl/repair_portal)** | Organizing specialty repair intake, service records, permissions and workflow steps | Public Frappe/ERPNext source; source presence does not certify every deployment claim |
+| **[ECCB application](https://github.com/dthompsonfl/eccb.app)** | Member and administrative workflows, access controls, structured data and background processing | Public application codebase; individual feature authorship and deployment scale are not assumed |
+| **[Restaurant POS](https://github.com/dthompsonfl/pos)** | Restaurant and retail ordering, checkout, shifts, kitchen workflows and integration boundaries | **Prototype / production hardening**, not certified production software |
 
-For the POS repository, useful implementation starting points are the [Room/WorkManager sync engine](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncEngine.kt), [explicit Room migrations](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/db/PosMigrations.kt), [payment router](https://github.com/dthompsonfl/pos/blob/main/payment-api/src/main/java/com/enterprise/pos/payment/router/PaymentRouter.kt), [scoped Stripe backend routes](https://github.com/dthompsonfl/pos/blob/main/backend/src/main/kotlin/com/enterprise/pos/backend/routes/PaymentRoutes.kt), and [current verification notes](https://github.com/dthompsonfl/pos/blob/main/FINAL_VERIFICATION.md).
+For project status, technical source references and known limitations, see **[Selected Projects](docs/SELECTED_PROJECTS.md)**.
 
-## Why operations matters to my engineering
+## How I approach problems
 
-Operational software is not finished when the happy path renders.
+1. **Understand the work.** Talk through the people, constraints, records, handoffs and exceptions.
+2. **Investigate.** Examine what happens in practice and separate the underlying issue from its symptoms.
+3. **Compare realistic options.** Consider cost, time, operational impact and what can be supported afterward.
+4. **Implement at the right level.** Improve a procedure, purchasing decision, worksheet or system rather than assuming every problem needs new software.
+5. **Check what changed.** Distinguish a recommendation, a pilot, an implemented action and an independently measured result.
 
-My operating background includes employee workflows, staffing and scheduling, cash controls, financial reconciliation, customer operations, SOPs, exception handling, and processes for nontechnical employees. That changes the questions I ask while engineering:
+## Background and scope
 
-- What is the authoritative state?
-- What happens when a request times out after the external side effect may already have occurred?
-- Can the same command arrive twice without charging, firing, or applying it twice?
-- What can continue offline, what may be queued, and what must fail closed?
-- Can a manager understand and recover from an exception without engineering support?
-- Are permissions and location/register scope enforced by the authoritative service rather than trusted from the client?
-- Can the system explain what happened after a failure?
+My operating experience includes assistant management in shipping and retail service, progression into Manager-in-Charge responsibilities in customer-facing venue operations, and hands-on responsibility for a specialty repair business from 2022 to 2025. That business involved customer service, purchasing, supplier coordination and pricing decisions.
 
-The deeper treatment is in [Restaurant Operations Case Study](./docs/RESTAURANT_OPERATIONS_CASE_STUDY.md) and [Reliability Patterns](./docs/RELIABILITY_PATTERNS.md).
+I began independent, project-based software development in **2021**. I have worked on commerce integrations, business applications and operational software, including work with AI coding assistance. My operating years are **not** software-engineering employment years, and repositories are **not** proof that I manually authored every line or that each system has been deployed at commercial scale.
 
-## Portfolio map
+Some work and source records are private. This portfolio uses public code and carefully limited descriptions rather than exposing private financial records, contracts, customer data, credentials or proprietary implementations.
 
-- **[Documentation index](./docs/README.md)** — how to read the portfolio and how evidence is classified
-- **[Career timeline](./docs/CAREER_TIMELINE.md)** — operations background → 2021 Shopify → integrations → full-stack → backend/platform → restaurant/mobile/AI systems
-- **[Selected projects](./docs/SELECTED_PROJECTS.md)** — project-by-project scope, evidence, status, and limitations
-- **[Restaurant operations case study](./docs/RESTAURANT_OPERATIONS_CASE_STUDY.md)** — ordering, POS, KDS, payments, offline/recovery, integrations, security, and operational UX
-- **[Reliability patterns](./docs/RELIABILITY_PATTERNS.md)** — idempotency, state machines, retries, outbox, webhooks, concurrency, reconciliation, overload, migrations, and recovery
-- **[Engineering principles](./docs/ENGINEERING_PRINCIPLES.md)** — how I make implementation decisions
-- **[Technical stack](./docs/TECHNICAL_STACK.md)** — technologies grouped by actual depth rather than a keyword inventory
+## Where this background fits
 
-## Evidence and disclosure
+I am interested in roles across **business operations, procurement and purchasing, pricing and commercial analysis, process improvement, business analysis, implementation, customer operations and business systems**, including work where understanding software and integrations is an advantage.
 
-Some of my most current systems are private because they contain business-specific workflows and production-sensitive implementation details. I use those repositories to validate experience, but this public profile only presents sanitized capability descriptions. I do not publish customer data, credentials, private URLs, proprietary source, internal identifiers, production configuration, or security-sensitive details.
+### Explore further
 
-Throughout this portfolio I distinguish between:
-
-1. **public implementation evidence** that can be inspected directly;
-2. **private source-validated experience** summarized without exposing proprietary material;
-3. **engineering patterns or principles** that describe how I design systems; and
-4. **adjacent knowledge** that I do not present as equivalent to hands-on depth.
-
-That distinction is intentional. Source completeness, architecture quality, and production certification are not the same claim.
-
-## Opportunities
-
-I am open to backend, platform, product-engineering, and restaurant-technology roles where the work requires ownership across product behavior, data integrity, integrations, reliability, and real operational outcomes.
+- **[Portfolio guide: business and technical reading paths](docs/README.md)**
+- **[Career timeline](docs/CAREER_TIMELINE.md)**
+- **[Selected source-backed projects](docs/SELECTED_PROJECTS.md)**
+- **[Technical stack and depth](docs/TECHNICAL_STACK.md)**
+- **[Engineering principles](docs/ENGINEERING_PRINCIPLES.md)**
