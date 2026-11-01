@@ -52,7 +52,7 @@ This is a plain-language map of the work I can discuss with a hiring manager. It
 - [Repair Portal](https://github.com/dthompsonfl/repair_portal): repair process records, permissions and scheduled business workflows.
 - [ECCB application](https://github.com/dthompsonfl/eccb.app): administration, member workflows, permissions and background processing.
 - [Restaurant POS](https://github.com/dthompsonfl/pos): operational workflow prototype, including offline and payment boundaries.
-- [Frappe Desk Navbar extension](https://github.com/dthompsonfl/desk_navbar_extended): role-scoped configuration and UI extensions.
+- [Frappe Desk Navbar Extended modifications](https://github.com/dthompsonfl/desk_navbar_extended): role-scoped configuration and UI work on an existing application. Its source credits the original publisher, Gavin D'souza, alongside my modifications.
 - [Clarinet research simulator](https://github.com/dthompsonfl/clarinet_simulator): experimental modeling and optimization code.
 
 The [public work index](./PUBLIC_WORK_INDEX.md) distinguishes deeper evidence, experiments, historical artifacts and work that should not be treated as original authorship merely because a repository is visible.
