@@ -1,60 +1,50 @@
 # Dylan Thompson
 
-**Operations & Business Systems Professional**
+**Business Operations & Systems | Procurement · Pricing · People Leadership · Process Improvement**
 
-**Purchasing · Pricing · People · Process Improvement · Technology**
+I work on the operational problems that sit between people, purchasing decisions, business processes and technology. My background combines **more than a decade of hands-on customer-facing operations and management** with small-business purchasing, Excel-based pricing analysis, and independent software and integration work beginning in 2021.
 
-I work where day-to-day business operations, commercial decisions and technology meet. My experience spans more than a decade in customer-facing service and operations, including shift leadership, supplier purchasing, pricing, cash reconciliation and process improvement. Since 2021, I have also worked on software and integrations through independent, project-based development.
+My approach is practical: **understand the problem, examine the evidence, compare the options, make or support a decision, and help put the solution to work.**
 
-I like getting to the root of a problem, understanding the people and constraints involved, comparing realistic options and helping put the solution into practice. Sometimes that means improving a purchasing decision or procedure. Sometimes it means building a spreadsheet, an integration or a system. The goal is the same: **make the work clearer, more reliable and easier to operate.**
+## Evidence at a glance
 
-## Selected evidence
+- **People leadership:** As Manager-in-Charge at Panama City Bingo, I managed **approximately 23 direct reports**. My firsthand responsibilities included interviewing and selecting staff, staffing decisions, scheduled performance reviews and coaching. [How I ran operations](docs/case-studies/frontline-operations-and-team-coordination.md)
+- **Purchasing and pricing:** I created and used Excel supplier-pricing, discount, purchasing and invoice-tracking workbooks in a specialty repair business. When one critical part depended on a single supplier, I compared **five alternatives**, purchased an approved substitute and identified a backup source. [The purchasing decision](docs/case-studies/purchasing-pricing-and-supplier-decisions.md)
+- **Program delivery:** I helped turn a proposed daytime program into **real customer sessions**, working through schedules, staffing, operating responsibilities, game design, pricing, payouts and reporting. [The program launch](docs/case-studies/daytime-program-launch.md)
+- **Business systems:** I worked on custom CRM workflows and developed a **Shopify Admin GraphQL-to-ERPNext integration for my own business**, connecting technical implementation to operational records and decisions. [The implementation work](docs/case-studies/business-systems-and-implementation.md)
 
-| The work | A specific example | Explore |
+These are concrete actions, not invented savings figures, certified enterprise deployments or claimed corporate department tenure. Employment responsibilities and program outcomes are described from my firsthand account; original purchasing materials and public code provide additional evidence where available.
+
+## Find the experience relevant to your work
+
+| Business need | Start here |
+|---|---|
+| **Procurement, supplier operations or pricing** | [Supplier decisions, purchase records, Excel analysis and commercial judgment](docs/case-studies/purchasing-pricing-and-supplier-decisions.md) |
+| **Operations, people management or customer support** | [Staffing, hiring decisions, coaching, escalations and frontline execution](docs/case-studies/frontline-operations-and-team-coordination.md) |
+| **Project, program or process improvement** | [Daytime program launch](docs/case-studies/daytime-program-launch.md) and [adopted operational improvements](docs/case-studies/operational-reporting-and-process-change.md) |
+| **Business analysis, implementation or AI-enabled workflows** | [Business-system implementation](docs/case-studies/business-systems-and-implementation.md) and [commercial decision support](docs/case-studies/commercial-document-review-and-decision-support.md) |
+
+For a cross-functional overview, see the [professional capability and evidence map](docs/PROFESSIONAL_CAPABILITIES.md).
+
+## Public implementation evidence
+
+My GitHub projects show the systems side of that operating experience. Public source demonstrates what is implemented in a repository; it does not automatically establish production use, individual authorship of every line or measured commercial impact.
+
+| Project | Operational problem represented | Evidence status |
 |---|---|---|
-| **Supplier purchasing & pricing** | Built and used supplier-price and purchasing workbooks; evaluated five alternatives for a critical repair part and purchased from an approved alternative source | [Purchasing & supplier decisions](docs/case-studies/purchasing-pricing-and-supplier-decisions.md) |
-| **People & daily operations** | Progressed from frontline roles to Manager-in-Charge responsibilities; coordinated service, handled escalations, and supported staff workflows | [People & operations](docs/case-studies/frontline-operations-and-team-coordination.md) |
-| **Practical process improvement** | Developed a service route that colleagues adopted; separately investigated reporting exceptions and proposed clearer controls | [Process & reporting](docs/case-studies/operational-reporting-and-process-change.md) |
-| **Commercial judgment** | Reviewed business-agreement terms and proposed redlines; presented a growth/measurement proposal that leadership evaluated but did not adopt | [Agreements & decisions](docs/case-studies/commercial-document-review-and-decision-support.md) |
-| **Business systems** | Worked on custom CRM systems, piloted an internal CRM concept and developed Shopify-to-ERPNext integration for my own business | [Systems & implementation](docs/case-studies/business-systems-and-implementation.md) |
+| [Repair Portal](https://github.com/dthompsonfl/repair_portal) | Repair intake, service records, permissions and process automation | Public Python/Frappe/ERPNext source |
+| [ECCB application](https://github.com/dthompsonfl/eccb.app) | Member and administrative workflows, access controls and background processing | Public development codebase |
+| [Restaurant POS](https://github.com/dthompsonfl/pos) | Ordering, checkout, kitchen and shift workflows, offline data and recovery | **Prototype / production hardening**, not certified deployment |
+| [Frappe Desk Navbar](https://github.com/dthompsonfl/desk_navbar_extended) | Role-aware settings and operational interface configuration | Public implementation source |
 
-My business examples are based on actual work, with some privately reviewed original records and some firsthand accounts. Where an action was proposed, piloted or not adopted, I distinguish that from an implemented result.
+See the [wider public-work index](docs/PUBLIC_WORK_INDEX.md) for research prototypes, additional code and clear evidence limits.
 
-## Public technical work
+## The career thread
 
-Technology is a supporting strength, not a substitute for operational experience. The repositories below expose **actual source** that reviewers can inspect; they do not by themselves prove deployment scale, personal authorship of every line or production certification.
+I progressed from retail/shipping assistant management and customer-facing venue work into Manager-in-Charge responsibilities. I also operated a specialty instrument-repair business from 2022 to 2025, where purchasing, pricing, supplier relationships and service decisions were part of the daily work. Since 2021, I have independently developed software and integrations on a project basis, including AI-assisted work that I direct and review.
 
-| Project | What it helps demonstrate | Status |
-|---|---|---|
-| [Repair Portal](https://github.com/dthompsonfl/repair_portal) | Service-process modeling, ERPNext/Frappe workflows, permissions and background tasks | Public application code |
-| [ECCB application](https://github.com/dthompsonfl/eccb.app) | Role-aware member/admin operations, structured records and background processing | Active public application code |
-| [Restaurant POS](https://github.com/dthompsonfl/pos) | Restaurant/retail workflows, payments, offline state and operational recovery | Prototype; production hardening remains |
-| [Frappe Desk Navbar extension](https://github.com/dthompsonfl/desk_navbar_extended) | Operational interface configuration and role-scoped feature settings | Public source; deployment not certified |
-| [Clarinet research simulator](https://github.com/dthompsonfl/clarinet_simulator) | Cross-disciplinary modeling, Python interfaces and optimization experiments | Research prototype; scientific accuracy not independently verified |
+**The common thread is business judgment backed by execution.** I understand how processes affect customers, employees, cost, records and the systems people rely on.
 
-**[Explore the wider public-code index and its evidence limits](docs/PUBLIC_WORK_INDEX.md).** I distinguish public implementations from experiments, historical artifacts and third-party forks.
+[Career timeline](docs/CAREER_TIMELINE.md) · [Business case studies](docs/README.md#start-here-business-and-operations) · [Source-backed technical projects](docs/SELECTED_PROJECTS.md) · [Technical experience](docs/TECHNICAL_STACK.md)
 
-## How I approach a problem
-
-**Understand the work → investigate the real constraint → compare the options → make or support a decision → implement at the appropriate level → check the actual result.**
-
-This is the common thread across business operations, purchasing, process improvement and software. A recommendation is not the same as an implemented change; source code is not the same as a verified production outcome.
-
-## Professional background
-
-My experience includes assistant management in retail/shipping service, progression to Manager-in-Charge in customer-facing venue operations, and responsibility for a specialty repair business from 2022 to 2025. My independent software-development work began in **2021** and overlaps the operating career; the operating years are **not** counted as salaried engineering tenure.
-
-## Where I can contribute
-
-Operations and business systems · Procurement and purchasing · Pricing and commercial analysis · Business and process analysis · Implementation and workflow improvement · Customer operations · Operations-focused technology and automation.
-
-## Browse the evidence
-
-- **[Professional capability map](docs/PROFESSIONAL_CAPABILITIES.md)**: what I have done, how it is supported and where the boundaries are.
-- **[Career timeline](docs/CAREER_TIMELINE.md)**: actual role progression and project chronology.
-- **[Business case studies](docs/README.md#start-here-business-and-operations)**: operational, commercial and implementation examples.
-- **[Public work index](docs/PUBLIC_WORK_INDEX.md)**: inspectable source, experiments and provenance.
-- **[Technical project details](docs/SELECTED_PROJECTS.md)**: code references and implementation status.
-- **[Technical stack](docs/TECHNICAL_STACK.md)** and **[engineering principles](docs/ENGINEERING_PRINCIPLES.md)**: deeper material for technical reviewers.
-
-Some client, commercial, employee and project records are private. I describe those experiences at an appropriate level without publishing private documents, credentials, financial records or proprietary code.
+*Some commercial, customer and employer records are not public. I keep confidential material private, separate prototypes from deployed systems, and distinguish firsthand accounts from independently verified outcomes.*

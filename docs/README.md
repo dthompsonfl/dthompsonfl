@@ -6,13 +6,17 @@ This portfolio shows how I connect hands-on business operations with purchasing,
 
 ## Start here: business and operations
 
-1. [People & Operations](./case-studies/frontline-operations-and-team-coordination.md) — role progression, staff coordination and direct service experience.
-2. [Commercial Documents & Decisions](./case-studies/commercial-document-review-and-decision-support.md) — agreement term comparisons and a leadership no-go decision.
-3. [Purchasing, Pricing & Supplier Decisions](./case-studies/purchasing-pricing-and-supplier-decisions.md) — real purchasing decisions, comparison tools and a supplier-continuity example.
-4. [Operational Reporting & Process Improvement](./case-studies/operational-reporting-and-process-change.md) — a peer-adopted service route and a separate reporting investigation.
-5. [Business Systems & Implementation](./case-studies/business-systems-and-implementation.md) — business requirements translated into CRM, commerce/ERP and operational workflows.
-6. [Career Timeline](./CAREER_TIMELINE.md) — how earlier and continuing business operations relate to independent technical work.
-7. [Selected Projects](./SELECTED_PROJECTS.md) — inspectable code, current implementation status and limitations.
+Choose the evidence most relevant to the problem you need solved. Each story distinguishes the action I personally performed from outcomes I cannot independently quantify.
+
+| Your area of interest | Fastest review path |
+|---|---|
+| **Purchasing, supplier operations or pricing** | [Supplier evaluation, pricing workbooks and purchase records](./case-studies/purchasing-pricing-and-supplier-decisions.md) |
+| **Team leadership and customer operations** | [Hiring decisions, approximately 23 direct reports, coaching and service operations](./case-studies/frontline-operations-and-team-coordination.md) |
+| **Project/program execution and business analysis** | [Daytime program brought from design to actual customer sessions](./case-studies/daytime-program-launch.md) and [practical process improvement](./case-studies/operational-reporting-and-process-change.md) |
+| **Implementation, business systems or workflow automation** | [CRM, commerce/ERP integration and operational systems](./case-studies/business-systems-and-implementation.md) |
+| **Commercial agreements and leadership decisions** | [Contract-review support and a documented no-go recommendation](./case-studies/commercial-document-review-and-decision-support.md) |
+
+For the whole professional picture, read [Professional Capabilities](./PROFESSIONAL_CAPABILITIES.md) and [Career Timeline](./CAREER_TIMELINE.md). For inspectable code, use [Selected Projects](./SELECTED_PROJECTS.md) and the [Public Work Index](./PUBLIC_WORK_INDEX.md).
 
 ## Technical review path
 

@@ -10,17 +10,21 @@ This is a plain-language map of the work I can discuss with a hiring manager. It
 |---|---|---|
 | Shift and frontline coordination | Assistant Manager in retail/shipping service; later Manager-in-Charge work in customer-facing venues | Firsthand role and responsibility history; employer HR files not published |
 | Customer escalations and service recovery | Direct responsibility for customer-facing transactions, problems and operating exceptions | Firsthand experience; no invented service-level statistics |
-| Staff guidance and workflow support | Coordinated staff workflows, supported colleague training and repeatable procedures | Firsthand experience; team size and formal HR scope are not inferred here |
+| Hiring, selection and team leadership | At Panama City Bingo, personally interviewed and selected employees, made staffing decisions and managed approximately 23 direct reports | Firsthand candidate account; no independent employer organization chart or corporate HR scope asserted |
+| Performance management and coaching | Held scheduled one-on-one reviews and documented employee coaching within venue operations | Firsthand management work; not a regulated HR or payroll-compliance credential |
+| Staff guidance and workflow support | Coordinated staff workflows, supported colleague training and repeatable procedures | Firsthand experience in customer-facing workplaces |
 | Cash and shift reporting | Shift reconciliation, cash balancing and review of record completeness | Actual operating work; not a licensed accounting or external audit engagement |
+| Program design and launch | Helped plan and launch a daytime customer program with games, operating schedule, staffing, prices, payouts and sessions | Firsthand account confirms real sessions; attendance, dates and financial impact not independently verified |
 | Practical improvements | Service route developed in 2019 and voluntarily adopted by colleagues | Observed adoption, not a measured sales uplift or imposed policy |
 
-[See people and operations](./case-studies/frontline-operations-and-team-coordination.md) · [See process and reporting](./case-studies/operational-reporting-and-process-change.md)
+[See people and operations](./case-studies/frontline-operations-and-team-coordination.md) · [See the daytime launch](./case-studies/daytime-program-launch.md) · [See process and reporting](./case-studies/operational-reporting-and-process-change.md)
 
 ## Purchasing, pricing and commercial decisions
 
 | Capability | Experience | Evidence boundary |
 |---|---|---|
-| Supplier research and purchasing | Compared availability, costs and purchasing options for a specialty repair business | Firsthand owner-operated work; not enterprise spend authority |
+| Supplier research and purchasing | Compared availability, costs, order quantities and supplier options in a specialty repair business | Firsthand owner-operated work; not enterprise spend authority |
+| Purchase-order and document routing | Prepared purchase orders and routed commercial documents for signatures as part of practical business work | Firsthand account; no unsupported enterprise procurement, legal or signatory authority |
 | Pricing and Excel analysis | Created and used supplier-price, discount, inventory and purchasing worksheets | Original workbooks reviewed privately; no audited margin uplift |
 | Purchase/invoice visibility | Built a supplier-account tracker for order references, due dates and outstanding obligations | Original workbook and selected invoice identifiers cross-checked privately; not proof of actual payment settlement |
 | Supplier continuity | Evaluated five alternate sources for a critical part; purchased from an approved alternative and identified a backup | Firsthand implementation account; no independently verified savings or availability guarantee |
@@ -33,6 +37,7 @@ This is a plain-language map of the work I can discuss with a hiring manager. It
 | Capability | Experience | Evidence boundary |
 |---|---|---|
 | Investigating discrepancies | Worked through operating-report interpretation and proposed clearer separation of exceptions | Investigation and recommendation; not a deployed reporting control |
+| Program and operational workflow design | Planned customer-facing schedules, staffing, responsibilities, pricing and payouts for a launched daytime program | Firsthand account with live sessions; no audited program ROI |
 | Requirements and workflow design | Translated operational needs into procedures, data models, permissions and application workflows | Firsthand work plus public project code |
 | Custom CRM systems | Worked on tailored CRM implementations; evaluated one internal feasibility pilot | Personal account; pilot was not an externally launched product |
 | Commerce and ERP integration | Implemented Shopify Admin GraphQL-to-ERPNext synchronization for the candidate's own business | Firsthand business use; no certified uptime or separate paid enterprise client claim |
@@ -40,7 +45,7 @@ This is a plain-language map of the work I can discuss with a hiring manager. It
 | Leadership decision material | Presented a customer-growth and measurement proposal in 2026 that was not adopted | Firsthand account; no claimed increase in revenue or formal board approval |
 | Business applications and automation | Project-based API integrations, Python, TypeScript, admin workflows and AI-assisted engineering since 2021 | Public and private source material with project-specific authorship and deployment limits |
 
-[See agreements and decisions](./case-studies/commercial-document-review-and-decision-support.md) · [See systems and implementation](./case-studies/business-systems-and-implementation.md)
+[See program delivery](./case-studies/daytime-program-launch.md) · [See agreements and decisions](./case-studies/commercial-document-review-and-decision-support.md) · [See systems and implementation](./case-studies/business-systems-and-implementation.md)
 
 ## Public source reviewers can inspect
 

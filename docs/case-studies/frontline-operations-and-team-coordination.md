@@ -1,32 +1,38 @@
-# Frontline Operations & Team Coordination
+# Frontline Operations, Hiring & Team Leadership
 
 **Scope:** Retail/shipping service and customer-facing venue operations  
-**Focus:** Staff coordination, daily execution, customer issues and consistent reporting
+**Focus:** Staffing decisions, day-to-day execution, coaching, customer issues and operating records
 
-## Where the experience comes from
+## Career progression
 
-- **The UPS Store, Assistant Manager (August 2011–December 2014):** Customer service, shift and employee coordination, escalations, shipping-related records and cash reconciliation.
-- **Panama City Bingo (October 2014–October 2018):** Began in a floor role and progressed to **Manager-in-Charge in March 2016**.
-- **Mary Esther Bingo (October 2018–present):** Began in a floor role and progressed to **Manager-in-Charge in July 2020**.
+- **The UPS Store, Assistant Manager (August 2011–December 2014):** Customer service, shift and employee coordination, escalations, shipping records and cash reconciliation.
+- **Panama City Bingo (October 2014–October 2018):** Entered in a floor role and became **Manager-in-Charge in March 2016**.
+- **Mary Esther Bingo (October 2018–present):** Entered in a floor role and became **Manager-in-Charge in July 2020**.
 
-The dates and role progression are based on my firsthand employment history. I do not present them as independently authenticated employer personnel records.
+These dates and responsibilities are based on my firsthand history, not independently certified employer personnel files. The roles overlap in time where shown.
 
-## Work I handled
+## What people leadership looked like in practice
 
-The common work across these settings involved making sure customers were served, employees understood the tasks in front of them, issues were escalated when needed, and shifts closed with usable records.
+While serving as Manager-in-Charge at **Panama City Bingo**, I had **approximately 23 direct reports**. I personally participated in the actual hiring process: interviewing applicants, selecting candidates and making staffing decisions. I also held scheduled one-on-one performance reviews, documented coaching and helped employees understand the work expected of them.
 
-That included coordinating operating procedures and service activities, helping colleagues with processes, handling customer situations, and working with cash and shift reporting. The practical judgment is often in the exceptions: what needs immediate attention, what should be documented, what can be resolved at the counter and what requires management review.
+This was hands-on venue leadership, not an assertion that I ran an enterprise HR department, managed multiple sites or handled regulated payroll tax administration.
 
-I also worked on ordering, receiving, verifying and organizing operating supplies in venue work, rather than treating inventory as only a system record.
+## Keeping daily operations moving
 
-## A real process-change example
+Across these roles, I worked with staff coverage, customer situations, operating procedures, shift records, cash reconciliation and service exceptions. I also handled ordering, receiving, checking and organizing operating supplies.
 
-In 2019, while still in a frontline position at Mary Esther, I developed a different route for serving pull-tab customers. Colleagues chose to adopt it. That was an **informal peer adoption**, not a policy I imposed as a manager and not a claimed measured sales increase.
+In customer-facing operations, a plan is useful only if people can actually carry it out. I learned to connect staffing, procedures, customer needs and the records needed for a reliable shift handoff.
 
-The separate [operational reporting case study](./operational-reporting-and-process-change.md) explains both this change and a later record-review investigation.
+## Two examples beyond routine supervision
 
-## What it demonstrates
+**Launching a daytime program.** At Panama City Bingo, I helped plan and launch a new daytime offering, including staffing, responsibilities, game schedules, prices and payouts. The program reached real customer sessions. [Read the launch case study](./daytime-program-launch.md).
 
-These roles required both execution and judgment: dealing with people in real time, supporting repeatable procedures, responding to operational exceptions and keeping records useful for the next shift. That is practical operations experience, not an assertion of multi-site executive authority or unverified payroll/compliance credentials.
+**Improving a service route.** In 2019 at Mary Esther, before my Manager-in-Charge promotion there, I developed a pull-tab service route that colleagues voluntarily adopted. I am not assigning a measured sales gain to that change. [Read the improvement case study](./operational-reporting-and-process-change.md).
+
+## What this demonstrates
+
+Practical operations leadership: staffing, interviewing and selection, performance conversations, repeatable procedures, customer escalation, service decisions and following through on real operating work.
+
+The **approximately 23** direct-report count and hiring responsibilities are firsthand statements rather than an employer-issued organization chart. I do not turn them into unsupported corporate HR, multi-location or payroll-compliance credentials.
 
 [Back to profile](../../README.md) · [Capability map](../PROFESSIONAL_CAPABILITIES.md)

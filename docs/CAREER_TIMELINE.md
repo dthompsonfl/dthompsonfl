@@ -37,6 +37,12 @@ The roles and dates above are **firsthand accounts**, not employment records ind
                 +-- backend, web, mobile and AI-assisted systems work
 ~~~
 
+## Selected operating examples
+
+- **People leadership:** At Panama City Bingo, my firsthand management work included approximately 23 direct reports, interviewing and selecting employees, staffing decisions, one-on-one reviews and documented coaching. [Details](./case-studies/frontline-operations-and-team-coordination.md)
+- **Program delivery:** Helped design and launch a daytime program, including staffing, schedules, games, pricing, payouts and real customer sessions. The specific launch date and financial outcomes are not independently established. [Case study](./case-studies/daytime-program-launch.md)
+- **Commercial analysis:** Created and used supplier-price and purchasing spreadsheets in specialty repair operations and followed through on an alternative-source decision. [Case study](./case-studies/purchasing-pricing-and-supplier-decisions.md)
+
 ## Operating career — direct work with people, purchasing and processes
 
 My customer-facing operating career began long before my software work and has continued alongside it. My experience spans retail/shipping service, frontline venue work, Manager-in-Charge responsibilities and an owner-operated specialty repair business. In those settings I worked directly with the people, information and commercial decisions that keep an operation functioning.
