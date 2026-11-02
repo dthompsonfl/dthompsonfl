@@ -13,6 +13,15 @@ A repository appearing under this account is not, by itself, proof that I person
 | [Restaurant POS](https://github.com/dthompsonfl/pos) | [Implementation status](https://github.com/dthompsonfl/pos/blob/main/README.md) and [sync engine](https://github.com/dthompsonfl/pos/blob/main/data/src/main/java/com/enterprise/pos/data/sync/SyncEngine.kt) | Retail/restaurant workflows, checkout, local state, recovery and hardware integration boundaries | **Prototype**; production provider, persistence and hardware validation remains |
 | [Desk Navbar Extended](https://github.com/dthompsonfl/desk_navbar_extended) | [Role-aware settings](https://github.com/dthompsonfl/desk_navbar_extended/blob/main/desk_navbar_extended/desk_navbar_extended/doctype/desk_navbar_extended_settings/desk_navbar_extended_settings.py) | Frappe operational UI configuration and role-scoped feature behavior | Modified existing Frappe app; source credits Gavin D'souza as original publisher. Deployment and adoption not independently validated |
 
+## Developer tooling: source-backed examples
+
+These tools show my interest in improving how engineering work is inspected and navigated. They are public code artifacts, not claims of independent production performance or benchmark superiority.
+
+| Repository | Source to inspect | Engineering scope | Limit |
+|---|---|---|---|
+| [Hyperdrive Auditor](https://github.com/dthompsonfl/hyperdrive-audit) | [Auditor implementation](https://github.com/dthompsonfl/hyperdrive-audit/blob/main/src/audit/Auditor.mjs), [test/quality workflow](https://github.com/dthompsonfl/hyperdrive-audit/blob/main/.github/workflows/quality.yml) | JavaScript CLI for TypeScript/Next.js monorepo checks, boundary and dependency inspection, CI/SARIF reporting and guided review | No verified detection accuracy, adoption count or claim that current CI passed |
+| [Apex Context Server](https://github.com/dthompsonfl/apex-context-server) | [Indexing engine](https://github.com/dthompsonfl/apex-context-server/blob/main/src/indexer.ts), [fixture tests](https://github.com/dthompsonfl/apex-context-server/blob/main/src/indexer.test.ts) | TypeScript MCP server with AST-aware indexing, symbol and route lookup, file context and persisted workspace memory | Source and test definitions inspected; no independent runtime or productivity benchmark |
+
 ## Cross-domain exploration and experimentation
 
 These projects show the range of problems represented in the public account. They are **not ranked as proven production products**, and a listing does not assert independent personal authorship.
